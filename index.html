@@ -46,7 +46,7 @@ const DATES = [
 ];
 const MAX_PERSONS = 6;
 const PT = 5000; // transfer price
-const PC = 5500; // card price
+const PC = 6000; // card price
 const BANK = '카카오뱅크 3333-06-4749542 임솔';
 const ADMIN_PW = '9241';
 
@@ -366,37 +366,33 @@ function App() {
         </div>
         <div style={S.fg}><label style={S.fl}>결제 방식</label>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-            <button style={{...S.payC,...(form.payment==='transfer'?S.payCG:{}),position:'relative'}} onClick={()=>setForm({...form,payment:'transfer'})}><div style={{position:'absolute',top:-8,right:-8,background:'#e53935',color:'#fff',fontSize:10,fontWeight:800,padding:'3px 8px',borderRadius:10}}>추천</div><div style={{fontSize:28,marginBottom:6}}>🏦</div><div style={{fontSize:13,color:'#666',marginBottom:4}}>계좌이체</div><div style={{fontSize:14,fontWeight:700}}>1인 {fmt(PT)}</div></button>
-            <button style={{...S.payC,...(form.payment==='card'?S.payCO:{})}} onClick={()=>setForm({...form,payment:'card'})}><div style={{fontSize:28,marginBottom:6}}>💳</div><div style={{fontSize:13,color:'#666',marginBottom:4}}>현장 카드결제</div><div style={{fontSize:14,fontWeight:700}}>1인 {fmt(PC)}</div></button>
+            <button style={{...S.payC,...(form.payment==='transfer'?S.payCG:{}),position:'relative'}} onClick={()=>setForm({...form,payment:'transfer'})}><div style={{position:'absolute',top:-8,right:-8,background:'#e53935',color:'#fff',fontSize:10,fontWeight:800,padding:'3px 8px',borderRadius:10}}>추천</div><div style={{fontSize:28,marginBottom:6}}>💰</div><div style={{fontSize:13,color:'#666',marginBottom:4}}>사전예약</div><div style={{fontSize:14,fontWeight:700}}>1인 {fmt(PT)}</div></button>
+            <button style={{...S.payC,...(form.payment==='card'?S.payCO:{}),opacity:form.payment==='card'?0.8:0.45}} onClick={()=>setForm({...form,payment:'card'})}><div style={{fontSize:28,marginBottom:6}}>💳</div><div style={{fontSize:13,color:'#aaa',marginBottom:4}}>현장 카드결제</div><div style={{fontSize:14,fontWeight:700,color:'#aaa'}}>1인 {fmt(PC)}</div></button>
           </div>
         </div>
-        <div style={S.priceSum}><div style={{marginBottom:10}}><span style={{fontSize:13,color:'#888'}}>{form.payment==='transfer'?'계좌이체':'카드결제'} 1인 {fmt(up)} × {form.count}명</span></div>
+        <div style={S.priceSum}>
+          <div style={{marginBottom:10}}><span style={{fontSize:13,color:'#888'}}>1인 {fmt(up)} × {form.count}명</span></div>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',paddingTop:10,borderTop:'1px solid #f0f0f0'}}><span style={{fontSize:14,fontWeight:600}}>총 결제 금액</span><span style={{fontSize:22,fontWeight:900,color:'#FF6B35'}}>{fmt(tp)}</span></div>
         </div>
-        {form.payment==='transfer'&&<div style={S.bankBox}>
-          <div style={S.bankT}>💡 입금 계좌 안내 (입금 시 예약 확정)</div><div style={S.bankA}>{BANK}</div>
-          <div style={{fontSize:14,color:'#333',marginBottom:4}}>입금 금액: <strong>{fmt(tp)}</strong></div>
-          <div style={{fontSize:12,color:'#999'}}>예약자명으로 입금 → 확인 문자 발송</div>
-        </div>}
         <button style={{...S.ctaBtn,opacity:form.name&&form.phone?1:0.5,marginTop:4}} disabled={!form.name||!form.phone||submitting} onClick={handleReserve}>
-          {submitting?'처리 중...':'예약 신청하기 →'}
+          {submitting?'처리 중...':'사전예약하기 →'}
         </button>
       </div>}
 
       {/* STEP 4: CONFIRM */}
       {step===4 && <div style={{...S.stepW,animation:'fadeInUp 0.5s ease-out'}}>
         <div style={{fontSize:60,textAlign:'center',marginBottom:12,animation:'bounceIn 0.6s ease-out'}}>📩</div>
-        <h2 style={{fontSize:26,fontWeight:900,textAlign:'center',marginBottom:12,letterSpacing:-1}}>예약 신청 완료!</h2>
-        <div style={S.confNotice}><div style={{fontSize:22,flexShrink:0}}>💡</div><div style={{fontSize:14,color:'#1565C0',lineHeight:1.6,whiteSpace:'pre-line'}}>입금 확인 후 예약이 <strong>최종 확정</strong>됩니다.{"\n"}안내 문자를 확인해주세요!</div></div>
+        <h2 style={{fontSize:26,fontWeight:900,textAlign:'center',marginBottom:12,letterSpacing:-1}}>사전예약 완료!</h2>
+        <div style={S.confNotice}><div style={{fontSize:22,flexShrink:0}}>💡</div><div style={{fontSize:14,color:'#1565C0',lineHeight:1.6,whiteSpace:'pre-line'}}>{form.payment==='transfer'?<>아래 계좌로 입금해주시면 예약이 <strong>최종 확정</strong>됩니다.{"\n"}안내 문자를 확인해주세요!</>:<>현장에서 카드결제 시 예약이 <strong>최종 확정</strong>됩니다.{"\n"}안내 문자를 확인해주세요!</>}</div></div>
         <div style={S.confCard}>
           <div style={S.confR}><span style={S.confL}>📅 날짜</span><span style={S.confV}>{selDate.label}</span></div><div style={S.confD}/>
           <div style={S.confR}><span style={S.confL}>⏰ 시간</span><span style={S.confV}>{selTime}</span></div><div style={S.confD}/>
           <div style={S.confR}><span style={S.confL}>👤 예약자</span><span style={S.confV}>{form.name}</span></div><div style={S.confD}/>
           <div style={S.confR}><span style={S.confL}>👥 인원</span><span style={S.confV}>{form.count}명</span></div><div style={S.confD}/>
-          <div style={S.confR}><span style={S.confL}>💰 결제</span><span style={S.confV}>{form.payment==='transfer'?'계좌이체':'카드결제'} {fmt(tp)}</span></div>
+          <div style={S.confR}><span style={S.confL}>💰 금액</span><span style={S.confV}>{fmt(tp)}</span></div>
           <div style={{textAlign:'right',fontSize:12,color:'#999',paddingTop:4}}>1인 {fmt(up)} × {form.count}명</div>
         </div>
-        {form.payment==='transfer'&&<div style={S.bankBox}><div style={S.bankT}>🏦 입금 계좌 (입금 시 예약 확정!)</div><div style={S.bankA}>{BANK}</div><div style={{fontSize:14,color:'#333',marginBottom:4}}>입금 금액: <strong>{fmt(tp)}</strong></div><div style={{fontSize:12,color:'#999'}}>예약자명으로 입금해주세요</div></div>}
+        {form.payment==='transfer'&&<div style={S.bankBox}><div style={S.bankT}>🏦 입금 계좌 안내 (입금 시 예약 확정!)</div><div style={S.bankA}>{BANK}</div><div style={{fontSize:14,color:'#333',marginBottom:4}}>입금 금액: <strong>{fmt(tp)}</strong></div><div style={{fontSize:12,color:'#999'}}>예약자명으로 입금해주세요</div></div>}
         {form.payment==='card'&&<div style={{...S.bankBox,background:'#FFF5F0',borderColor:'#FFD4C0'}}><div style={{...S.bankT,color:'#E65100'}}>💳 현장 카드결제 안내</div><div style={{fontSize:14,color:'#333',marginBottom:4}}>결제 금액: <strong>{fmt(tp)}</strong></div><div style={{fontSize:12,color:'#999'}}>현장 도착 후 카드결제 시 예약이 확정됩니다</div></div>}
         <div style={{textAlign:'center',padding:'16px 0'}}>
           {smsSent?<div style={{color:'#4caf50',fontSize:14,fontWeight:600,display:'flex',alignItems:'center',justifyContent:'center',gap:8}}><span style={{display:'inline-flex',width:22,height:22,borderRadius:'50%',background:'#4caf50',color:'#fff',fontSize:13,alignItems:'center',justifyContent:'center'}}>✓</span> 안내 문자가 발송되었습니다</div>
