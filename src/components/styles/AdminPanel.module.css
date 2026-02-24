@@ -114,6 +114,225 @@
   background: linear-gradient(90deg, #FF6B35, #FFB347);
 }
 
+/* Section Title (shared) */
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+/* Gauge */
+.gaugeSection {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.gaugeWrap {
+  display: flex;
+  justify-content: center;
+}
+
+.gaugeTrack {
+  width: 180px;
+  height: 90px;
+  border-radius: 90px 90px 0 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.gaugeInner {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130px;
+  height: 65px;
+  background: #fff;
+  border-radius: 65px 65px 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 4px;
+}
+
+.gaugeVal {
+  font-size: 28px;
+  font-weight: 900;
+  color: #FF6B35;
+}
+
+.gaugeSub {
+  font-size: 11px;
+  color: #999;
+}
+
+/* Confirm Card */
+.confirmCard {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.confirmRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.confirmItem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.confirmDot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.confirmLabel {
+  font-size: 11px;
+  color: #999;
+}
+
+.confirmVal {
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.confirmRate {
+  font-size: 24px;
+  font-weight: 900;
+  color: #4caf50;
+}
+
+.confirmRevRow {
+  display: flex;
+  gap: 10px;
+}
+
+.confirmRevItem {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fafafa;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.confirmRevVal {
+  font-weight: 700;
+}
+
+/* Payment Bar */
+.paymentCard {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.paymentBarWrap {
+  margin-bottom: 10px;
+}
+
+.paymentBarBg {
+  display: flex;
+  height: 24px;
+  border-radius: 12px;
+  background: #eee;
+  overflow: hidden;
+}
+
+.paymentBarTransfer {
+  height: 100%;
+  background: #4caf50;
+  transition: width 0.3s;
+}
+
+.paymentBarCard {
+  height: 100%;
+  background: #FF6B35;
+  transition: width 0.3s;
+}
+
+.paymentLegend {
+  display: flex;
+  justify-content: space-between;
+}
+
+.paymentLegendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #666;
+}
+
+.paymentDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Top Slots */
+.topSlotCard {
+  background: #fff;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.topSlotRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.topSlotRow:last-child {
+  border-bottom: none;
+}
+
+.topSlotMedal {
+  font-size: 24px;
+}
+
+.topSlotTime {
+  font-size: 16px;
+  font-weight: 800;
+  flex: 1;
+}
+
+.topSlotCount {
+  font-size: 14px;
+  font-weight: 700;
+  color: #FF6B35;
+}
+
+.topSlotEmpty {
+  text-align: center;
+  padding: 20px;
+  color: #ccc;
+  font-size: 13px;
+}
+
 .refreshBtn {
   width: 100%;
   padding: 12px;
