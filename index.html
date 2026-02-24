@@ -366,7 +366,7 @@ function App() {
         </div>
         <div style={S.fg}><label style={S.fl}>결제 방식</label>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-            <button style={{...S.payC,...(form.payment==='transfer'?S.payCG:{}),position:'relative'}} onClick={()=>setForm({...form,payment:'transfer'})}><div style={{position:'absolute',top:-8,right:-8,background:'#e53935',color:'#fff',fontSize:10,fontWeight:800,padding:'3px 8px',borderRadius:10}}>추천</div><div style={{fontSize:28,marginBottom:6}}>💰</div><div style={{fontSize:13,color:'#666',marginBottom:4}}>사전예약</div><div style={{fontSize:14,fontWeight:700}}>1인 {fmt(PT)}</div></button>
+            <button style={{...S.payC,...(form.payment==='transfer'?S.payCG:{}),position:'relative'}} onClick={()=>setForm({...form,payment:'transfer'})}><div style={{position:'absolute',top:-8,right:-8,background:'#e53935',color:'#fff',fontSize:10,fontWeight:800,padding:'3px 8px',borderRadius:10}}>추천</div><div style={{fontSize:28,marginBottom:6}}>💰</div><div style={{fontSize:13,color:'#666',marginBottom:4}}>사전예약</div><div style={{fontSize:14,fontWeight:700}}>1인 {fmt(PT)}</div><div style={{fontSize:11,fontWeight:700,color:'#e53935',marginTop:4}}>1,000원 할인</div></button>
             <button style={{...S.payC,...(form.payment==='card'?S.payCO:{}),opacity:form.payment==='card'?0.8:0.45}} onClick={()=>setForm({...form,payment:'card'})}><div style={{fontSize:28,marginBottom:6}}>💳</div><div style={{fontSize:13,color:'#aaa',marginBottom:4}}>현장 카드결제</div><div style={{fontSize:14,fontWeight:700,color:'#aaa'}}>1인 {fmt(PC)}</div></button>
           </div>
         </div>
@@ -375,7 +375,7 @@ function App() {
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',paddingTop:10,borderTop:'1px solid #f0f0f0'}}><span style={{fontSize:14,fontWeight:600}}>총 결제 금액</span><span style={{fontSize:22,fontWeight:900,color:'#FF6B35'}}>{fmt(tp)}</span></div>
         </div>
         <button style={{...S.ctaBtn,opacity:form.name&&form.phone?1:0.5,marginTop:4}} disabled={!form.name||!form.phone||submitting} onClick={handleReserve}>
-          {submitting?'처리 중...':'사전예약하기 →'}
+          {submitting?'처리 중...':'사전예약하고 할인받기 →'}
         </button>
       </div>}
 
