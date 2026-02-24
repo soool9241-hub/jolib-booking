@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>조립공간 - 모듈형 조립 체험 예약</title>
+<meta name="description" content="완주 정월대보름 축제 - 조립공간 체험 예약">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&family=Bagel+Fat+One&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:#FAF9F6;-webkit-text-size-adjust:100%}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes bounceIn{0%{transform:scale(.3);opacity:0}50%{transform:scale(1.05)}70%{transform:scale(.9)}100%{transform:scale(1);opacity:1}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.container{max-width:440px;margin:0 auto;min-height:100vh;background:#FAF9F6}
+.loading{display:flex;align-items:center;justify-content:center;height:100vh;background:linear-gradient(135deg,#FF6B35,#FFAB76)}
+.loading-inner{text-align:center}.loading-icon{font-size:56px;margin-bottom:10px}
+.loading-text{color:#fff;font-size:22px;font-weight:900}
+</style>
+</head>
+<body>
+<div id="root"><div class="loading"><div class="loading-inner"><div class="loading-icon">🧩</div><div class="loading-text">불러오는 중...</div></div></div></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const { useState, useEffect, useCallback } = React;
+
+// ============================================
+// ⚠️ 여기에 Supabase 프로젝트 정보를 입력하세요!
+// ============================================
+const SUPABASE_URL = 'https://lmwbmfssssmzqbgozavr.supabase.co';       // 예: https://abcdef.supabase.co
+const SUPABASE_ANON_KEY = 'sb_publishable_OHvIXDwqAKJsv5cgw5zEAQ_pNK0NN-Q'; // 프로젝트 Settings > API > anon key
+const EDGE_FUNCTION_URL = SUPABASE_URL + '/functions/v1/send-sms';
+// ============================================
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+const DATES = [
+  { key: '2/28 (토)', label: '2/28 (토)', day: 1, startHour: 10, endHour: 20 },
+  { key: '3/1 (일)', label: '3/1 (일)', day: 2, startHour: 10, endHour: 17 },
+];
+const MAX_PERSONS = 6;
+const PT = 5000; // transfer price
+const PC = 5500; // card price
+const BANK = '카카오뱅크 3333-06-4749542 임솔';
+const ADMIN_PW = '9241';
+
+function genSlots(sh, eh) {
+  const s = [];
+  for (let h = sh; h < eh; h++) {
+    s.push(String(h).padStart(2,'0')+':00');
+    s.push(String(h).padStart(2,'0')+':20');
+    s.push(String(h).padStart(2,'0')+':40');
+  }
+  return s;
+}
+function fmt(n) { return n.toLocaleString()+'원'; }
+
+function App() {
+  const [step, setStep] = useState(0);
+  const [selDate, setSelDate] = useState(null);
+  const [selTime, setSelTime] = useState(null);
+  const [form, setForm] = useState({name:'',phone:'',count:1,payment:'transfer'});
+  const [bookings, setBookings] = useState([]);
+  const [blocked, setBlocked] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [smsSent, setSmsSent] = useState(false);
+  const [lastBooking, setLastBooking] = useState(null);
+  // Admin
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showPw, setShowPw] = useState(false);
+  const [pw, setPw] = useState('');
+  const [pwErr, setPwErr] = useState(false);
+  const [admTab, setAdmTab] = useState('overview');
+  const [admDate, setAdmDate] = useState(DATES[0]);
+  const [editing, setEditing] = useState(null);
+  const [editF, setEditF] = useState({});
+
+  const loadData = useCallback(async () => {
+    const [bRes, blRes] = await Promise.all([
+      supabase.from('bookings').select('*').order('created_at',{ascending:false}),
+      supabase.from('blocked_slots').select('*')
+    ]);
+    if (bRes.data) setBookings(bRes.data);
+    if (blRes.data) setBlocked(blRes.data);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { loadData(); }, [loadData]);
+
+  const getBooked = (d, t) => bookings.filter(b=>b.date===d&&b.time===t).reduce((s,b)=>s+(b.count||1),0);
+  const isBlk = (d, t) => blocked.some(b=>b.date===d&&b.time===t);
+  const getRem = (d, t) => isBlk(d,t) ? 0 : MAX_PERSONS - getBooked(d,t);
+
+  // 예약 신청
+  const handleReserve = async () => {
+    if (!form.name||!form.phone) return;
+    const rem = getRem(selDate.key, selTime);
+    if (form.count > rem) { alert('잔여 인원이 '+rem+'명입니다.'); return; }
+    setSubmitting(true);
+    const up = form.payment==='transfer' ? PT : PC;
+    const tp = up * form.count;
+    const { data, error } = await supabase.from('bookings').insert({
+      name: form.name, phone: form.phone, count: form.count,
+      payment: form.payment, date: selDate.key, time: selTime,
+      total_price: tp, status: '입금대기'
+    }).select().single();
+
+    if (error) { alert('예약 실패: '+error.message); setSubmitting(false); return; }
+    setLastBooking(data);
+    await loadData();
+    setStep(4);
+
+    // SMS 발송 (Edge Function)
+    try {
+      await fetch(EDGE_FUNCTION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+SUPABASE_ANON_KEY },
+        body: JSON.stringify({ booking: data })
+      });
+    } catch(e) { console.log('SMS error:', e); }
+    setTimeout(() => setSmsSent(true), 1500);
+    setSubmitting(false);
+  };
+
+  const reset = () => {
+    setStep(0);setSelDate(null);setSelTime(null);
+    setForm({name:'',phone:'',count:1,payment:'transfer'});
+    setSmsSent(false);setLastBooking(null);
+  };
+
+  // Admin
+  const admLogin = () => {
+    if(pw===ADMIN_PW){setIsAdmin(true);setShowPw(false);setPw('');setPwErr(false);loadData();}
+    else setPwErr(true);
+  };
+  const admCancel = async (b) => {
+    if(!confirm(b.name+'님 예약 취소?')) return;
+    await supabase.from('bookings').delete().eq('id',b.id);
+    await loadData();
+  };
+  const startEdit = b => { setEditing(b); setEditF({name:b.name,phone:b.phone,count:b.count,payment:b.payment}); };
+  const saveEdit = async () => {
+    if(!editing) return;
+    const up = editF.payment==='transfer'?PT:PC;
+    await supabase.from('bookings').update({
+      name:editF.name, phone:editF.phone, count:editF.count,
+      payment:editF.payment, total_price:up*editF.count
+    }).eq('id',editing.id);
+    await loadData(); setEditing(null);
+  };
+  const toggleBlk = async (d, t) => {
+    if(isBlk(d,t)) { await supabase.from('blocked_slots').delete().eq('date',d).eq('time',t); }
+    else { await supabase.from('blocked_slots').insert({date:d,time:t}); }
+    await loadData();
+  };
+  const admReset = async () => {
+    if(!confirm('⚠️ 모든 예약+차단 초기화?')) return;
+    await supabase.from('bookings').delete().neq('id',0);
+    await supabase.from('blocked_slots').delete().neq('id',0);
+    await loadData();
+  };
+
+  const maxC = selDate&&selTime ? getRem(selDate.key,selTime) : 6;
+  const up = form.payment==='transfer'?PT:PC;
+  const tp = up*form.count;
+  const totBooked = bookings.reduce((s,b)=>s+(b.count||1),0);
+  const totRev = bookings.reduce((s,b)=>s+(b.total_price||0),0);
+
+  if(loading) return null; // HTML loading shown
+
+  // ===== ADMIN PANEL =====
+  if(isAdmin) {
+    return (
+      <div className="container">
+        <div style={S.admBar}>
+          <button onClick={()=>setIsAdmin(false)} style={S.admBack}>← 나가기</button>
+          <span style={{fontSize:16,fontWeight:800}}>관리자 모드</span>
+          <span>🔐</span>
+        </div>
+        <div style={S.admTabs}>
+          {[{k:'overview',l:'📊 현황'},{k:'bookings',l:'📋 예약'},{k:'slots',l:'🔒 시간'}].map(t=>
+            <button key={t.k} style={{...S.admTab,...(admTab===t.k?S.admTabA:{})}} onClick={()=>{setAdmTab(t.k);loadData();}}>{t.l}</button>
+          )}
+        </div>
+        <div style={S.admC}>
+          {admTab==='overview' && <>
+            <div style={S.statGrid}>
+              <div style={S.statCard}><div style={{fontSize:28}}>👥</div><div style={S.statVal}>{totBooked}명</div><div style={S.statLbl}>예약 인원</div></div>
+              <div style={S.statCard}><div style={{fontSize:28}}>📝</div><div style={S.statVal}>{bookings.length}건</div><div style={S.statLbl}>예약 건수</div></div>
+              <div style={S.statCard}><div style={{fontSize:28}}>💰</div><div style={S.statVal}>{fmt(totRev)}</div><div style={S.statLbl}>예상 매출</div></div>
+              <div style={S.statCard}><div style={{fontSize:28}}>🚫</div><div style={S.statVal}>{blocked.length}개</div><div style={S.statLbl}>차단 타임</div></div>
+            </div>
+            {DATES.map(d=>{const slots=genSlots(d.startHour,d.endHour);const dp=bookings.filter(b=>b.date===d.key).reduce((s,b)=>s+(b.count||1),0);const db=slots.filter(sl=>isBlk(d.key,sl)).length;const tc=slots.length*MAX_PERSONS;
+              return <div key={d.key} style={S.dayCard}><div style={{display:'flex',justifyContent:'space-between',marginBottom:8}}><span style={{fontWeight:800}}>{d.label}</span><span style={{fontSize:12,color:'#999'}}>{d.startHour}:00~{d.endHour}:00</span></div><div style={{display:'flex',gap:16,fontSize:12,color:'#666',marginBottom:8}}><span>예약 {dp}/{tc}명</span><span>차단 {db}타임</span></div><div style={S.barBg}><div style={{...S.barFill,width:(dp/tc*100)+'%'}}></div></div></div>
+            })}
+            <button style={S.refBtn} onClick={loadData}>🔄 새로고침</button>
+            <button style={S.rstBtn} onClick={admReset}>⚠️ 전체 초기화</button>
+          </>}
+
+          {admTab==='bookings' && <>
+            {editing && <div style={S.modal}><div style={S.modalIn}>
+              <h3 style={{fontSize:18,fontWeight:800,marginBottom:4}}>✏️ 예약 수정</h3>
+              <div style={{fontSize:13,color:'#888',marginBottom:16}}>{editing.date} {editing.time}</div>
+              <div style={S.eg}><label style={S.el}>이름</label><input style={S.ei} value={editF.name} onChange={e=>setEditF({...editF,name:e.target.value})}/></div>
+              <div style={S.eg}><label style={S.el}>연락처</label><input style={S.ei} value={editF.phone} onChange={e=>setEditF({...editF,phone:e.target.value})}/></div>
+              <div style={S.eg}><label style={S.el}>인원</label><input style={S.ei} type="number" min="1" max="6" value={editF.count} onChange={e=>setEditF({...editF,count:parseInt(e.target.value)||1})}/></div>
+              <div style={S.eg}><label style={S.el}>결제</label><div style={{display:'flex',gap:8}}>
+                <button style={{...S.epb,...(editF.payment==='transfer'?S.epbA:{})}} onClick={()=>setEditF({...editF,payment:'transfer'})}>계좌이체</button>
+                <button style={{...S.epb,...(editF.payment==='card'?S.epbA:{})}} onClick={()=>setEditF({...editF,payment:'card'})}>카드</button>
+              </div></div>
+              <div style={{display:'flex',gap:8,marginTop:16}}><button style={S.esBtn} onClick={saveEdit}>저장</button><button style={S.ecBtn} onClick={()=>setEditing(null)}>취소</button></div>
+            </div></div>}
+
+            <button style={S.refBtn} onClick={loadData}>🔄 새로고침</button>
+            {bookings.length===0 && <div style={{textAlign:'center',padding:40,color:'#ccc'}}>예약이 없습니다</div>}
+            {bookings.map((b,i)=><div key={b.id} style={S.bCard}>
+              <div style={S.bTop}><div><span style={{fontSize:12,fontWeight:700,color:'#FF6B35',marginRight:8}}>#{i+1}</span><span style={{fontSize:13,fontWeight:600}}>{b.date} {b.time}</span></div>
+              <div style={{...S.bPay,background:b.payment==='transfer'?'#e8f5e9':'#fff3e0',color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'이체':'카드'} {fmt(b.total_price)}</div></div>
+              <div style={{padding:'10px 16px'}}><div style={{fontWeight:700}}>{b.name} <span style={{fontWeight:400,color:'#888'}}>({b.count}명)</span></div><div style={{fontSize:13,color:'#666',marginTop:2}}>{b.phone}</div><div style={{fontSize:11,color:'#aaa',marginTop:4}}>상태: {b.status}</div></div>
+              <div style={S.bActs}><button style={S.bEdit} onClick={()=>startEdit(b)}>✏️ 수정</button><button style={S.bDel} onClick={()=>admCancel(b)}>🗑️ 취소</button></div>
+            </div>)}
+          </>}
+
+          {admTab==='slots' && <>
+            <div style={{display:'flex',gap:8,marginBottom:16}}>
+              {DATES.map(d=><button key={d.key} style={{...S.admDBtn,...(admDate.key===d.key?S.admDBA:{})}} onClick={()=>setAdmDate(d)}>{d.label}</button>)}
+            </div>
+            <div style={{display:'flex',gap:16,justifyContent:'center',marginBottom:16,fontSize:12,color:'#888'}}><span>🟢 가능</span><span>🔴 차단</span><span>🟡 예약있음</span></div>
+            <div style={{display:'flex',flexDirection:'column',gap:8}}>
+              {genSlots(admDate.startHour,admDate.endHour).map(sl=>{
+                const blk=isBlk(admDate.key,sl);const bk=getBooked(admDate.key,sl);const rm=blk?0:MAX_PERSONS-bk;
+                let bg='#f0faf0',br='#c8e6c9',st=rm+'명 가능';
+                if(blk){bg='#ffebee';br='#ef9a9a';st='차단됨';}
+                else if(bk>0){bg='#fffde7';br='#fff9c4';st=bk+'명 예약 / '+rm+'명 남음';}
+                return <div key={sl} style={{background:bg,border:'2px solid '+br,borderRadius:12,padding:'14px 16px',display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+                  <div><div style={{fontSize:16,fontWeight:800}}>{sl}</div><div style={{fontSize:12,fontWeight:600,color:blk?'#e53935':bk>0?'#f57f17':'#4caf50'}}>{st}</div></div>
+                  <button style={{padding:'8px 14px',border:'none',borderRadius:8,color:'#fff',fontSize:12,fontWeight:700,cursor:'pointer',background:blk?'#4caf50':'#e53935'}} onClick={()=>toggleBlk(admDate.key,sl)}>{blk?'🔓 해제':'🔒 차단'}</button>
+                </div>
+              })}
+            </div>
+          </>}
+        </div>
+      </div>
+    );
+  }
+
+  // ===== MAIN APP =====
+  return (
+    <div className="container">
+      {/* PW Modal */}
+      {showPw && <div style={S.modal}><div style={S.pwBox}>
+        <div style={{fontSize:40,marginBottom:12}}>🔐</div>
+        <h3 style={{fontSize:18,fontWeight:800,marginBottom:20}}>관리자 로그인</h3>
+        <input style={{...S.ei,textAlign:'center',fontSize:18,letterSpacing:8}} type="password" placeholder="비밀번호" value={pw} onChange={e=>{setPw(e.target.value);setPwErr(false);}} onKeyDown={e=>e.key==='Enter'&&admLogin()} autoFocus/>
+        {pwErr && <div style={{color:'#e53935',fontSize:13,fontWeight:600,marginTop:8}}>비밀번호가 틀렸습니다</div>}
+        <div style={{display:'flex',gap:8,marginTop:16,width:'100%'}}>
+          <button style={S.esBtn} onClick={admLogin}>로그인</button>
+          <button style={S.ecBtn} onClick={()=>{setShowPw(false);setPw('');setPwErr(false);}}>취소</button>
+        </div>
+      </div></div>}
+
+      {/* STEP 0: INTRO */}
+      {step===0 && <div>
+        <div style={S.hero}><div style={S.hBg1}/><div style={S.hBg2}/><div style={S.hBg3}/>
+          <div style={{position:'relative',zIndex:1}}>
+            <div style={S.festTag}>🏮 완주 정월대보름 축제</div>
+            <h1 style={S.heroT}>조립공간</h1>
+            <p style={S.heroS}>끼우고 · 쌓고 · 만드는 모듈형 조립 체험</p>
+          </div>
+        </div>
+        <div style={{padding:'28px 20px 0'}}><div style={S.aboutCard}>
+          <div style={{fontSize:44,marginBottom:12,animation:'float 3s ease-in-out infinite'}}>🧩</div>
+          <h3 style={S.aboutH}>조립공간이란?</h3>
+          <p style={S.aboutP}>CNC로 정밀하게 커팅된 모듈 조각들을 <strong>손으로 끼우기만 하면</strong> 상자, 집, 자동차 등 다양한 형태를 만들 수 있는 체험이에요.</p>
+          <p style={S.aboutP2}>접착제도, 도구도 필요 없어서 <strong>어린이도 안전하게</strong> 즐길 수 있습니다!</p>
+        </div></div>
+        <div style={{padding:'28px 20px 0'}}>
+          <h3 style={S.secT}>체험 방법 안내</h3>
+          <div style={{display:'flex',flexDirection:'column',gap:12}}>
+            <div style={S.howCard}><div style={S.howBdg}>STEP 1</div><div style={{fontSize:36,marginBottom:8,marginTop:4}}>📋</div><div style={S.howT}>키트 설명 듣기</div><div style={S.howD}>조립 방법과 모듈 사용법을{"\n"}간단히 안내받아요</div></div>
+            <div style={S.howCard}><div style={{...S.howBdg,background:'#FF6B35'}}>STEP 2</div><div style={{fontSize:36,marginBottom:8,marginTop:4}}>🤲</div><div style={S.howT}>20분간 조립 체험</div><div style={S.howD}>모듈 조각을 끼우고 쌓아서{"\n"}나만의 작품을 만들어요</div></div>
+            <div style={S.howCard}><div style={{...S.howBdg,background:'#4caf50'}}>STEP 3</div><div style={{fontSize:36,marginBottom:8,marginTop:4}}>🎁</div><div style={S.howT}>5만원 상당 무료 체험권 증정!</div><div style={S.howD}>추후 사용 가능한 5만원 상당{"\n"}무료 체험권을 선물로 드려요</div><div style={S.howHL}>🎉 5만원 상당 체험을 무료로!</div></div>
+          </div>
+        </div>
+        <div style={S.infoStrip}>
+          <div style={S.infoI}><div style={{fontSize:24,marginBottom:6}}>📅</div><div style={S.infoL}>일정</div><div style={S.infoV}>2/28 ~ 3/1</div></div>
+          <div style={S.infoDv}/>
+          <div style={S.infoI}><div style={{fontSize:24,marginBottom:6}}>⏱️</div><div style={S.infoL}>체험시간</div><div style={S.infoV}>20분</div></div>
+          <div style={S.infoDv}/>
+          <div style={S.infoI}><div style={{fontSize:24,marginBottom:6}}>👧</div><div style={S.infoL}>타임당</div><div style={S.infoV}>최대 6명</div></div>
+        </div>
+        <div style={S.noticeBox}><div style={{fontSize:28,flexShrink:0}}>📢</div><div style={S.noticeT}>저녁 시간대는 예약이 몰릴 수 있으니{"\n"}<strong>미리 신청해서 예약해주세요!</strong></div></div>
+        <div style={S.ctaSec}><button style={S.ctaBtn} onClick={()=>setStep(1)}>체험 예약하기 →</button><div style={S.ctaSub}>체험비 1인 5,000원부터</div></div>
+        <button style={S.admLink} onClick={()=>setShowPw(true)}>관리자 모드</button>
+      </div>}
+
+      {/* PROGRESS */}
+      {step>0&&step<4 && <div style={S.progBar}>
+        <button style={S.progBack} onClick={()=>{if(step===3)setForm({...form,count:1});setStep(Math.max(0,step-1));}}>←</button>
+        <div style={S.progSteps}>{['날짜','시간','정보'].map((l,i)=>
+          <div key={i} style={S.pItem}><div style={{...S.pDot,background:step>i+1?'#FF6B35':step===i+1?'#FF6B35':'#ddd',transform:step===i+1?'scale(1.2)':'scale(1)'}}>{step>i+1?'✓':i+1}</div>
+          <span style={{fontSize:11,color:step>=i+1?'#FF6B35':'#bbb',fontWeight:step===i+1?700:400}}>{l}</span></div>
+        )}</div>
+      </div>}
+
+      {/* STEP 1: DATE */}
+      {step===1 && <div style={S.stepW}><h2 style={S.stepT}>날짜를 선택해주세요</h2>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12}}>
+          {DATES.map(d=>{const slots=genSlots(d.startHour,d.endHour);const tr=slots.reduce((s,sl)=>s+getRem(d.key,sl),0);const ts=slots.length*MAX_PERSONS;const pct=Math.round((ts-tr)/ts*100);
+            return <button key={d.key} style={S.dateCard} onClick={()=>{setSelDate(d);setStep(2);}}>
+              <div style={{fontSize:12,color:'#FF6B35',fontWeight:700,marginBottom:4}}>Day {d.day}</div>
+              <div style={{fontSize:28,fontWeight:900,marginBottom:4,letterSpacing:-1}}>{d.label}</div>
+              <div style={{fontSize:13,color:'#666',marginBottom:12}}>{d.startHour}:00 ~ {d.endHour}:00</div>
+              <div style={S.barBg}><div style={{...S.barFill,width:pct+'%'}}/></div>
+              <div style={{fontSize:12,color:'#4caf50',fontWeight:600,marginTop:8}}>잔여 {tr}/{ts}명</div>
+            </button>
+          })}
+        </div>
+      </div>}
+
+      {/* STEP 2: TIME */}
+      {step===2&&selDate && <div style={S.stepW}><h2 style={S.stepT}>{selDate.label} 시간 선택</h2>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,maxHeight:420,overflowY:'auto'}}>
+          {genSlots(selDate.startHour,selDate.endHour).map(sl=>{
+            const blk=isBlk(selDate.key,sl);const rm=getRem(selDate.key,sl);const full=rm<=0;
+            return <button key={sl} style={{...S.timeSlot,...(full?S.timeFull:{})}} disabled={full} onClick={()=>{setSelTime(sl);setForm({...form,count:1});setStep(3);}}>
+              <div style={{fontSize:16,fontWeight:700,marginBottom:2}}>{sl}</div>
+              <div style={{fontSize:11,fontWeight:600,color:full?'#ccc':rm<=1?'#e53935':'#4caf50'}}>{blk?'차단':full?'마감':rm+'명 남음'}</div>
+              {rm===1&&!full&&<div style={S.urgBdg}>1자리!</div>}
+            </button>
+          })}
+        </div>
+      </div>}
+
+      {/* STEP 3: FORM */}
+      {step===3 && <div style={S.stepW}><h2 style={S.stepT}>예약 정보 입력</h2>
+        <div style={{display:'flex',gap:8,marginBottom:24,flexWrap:'wrap'}}>
+          <span style={S.tag}>{selDate.label}</span><span style={S.tag}>{selTime}</span>
+          <span style={{...S.tag,background:'#e8f5e9',color:'#2e7d32',borderColor:'#c8e6c9'}}>잔여 {maxC}명</span>
+        </div>
+        <div style={S.fg}><label style={S.fl}>예약자 이름</label><input style={S.fi} placeholder="이름을 입력해주세요" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></div>
+        <div style={S.fg}><label style={S.fl}>연락처</label><input style={S.fi} placeholder="010-0000-0000" type="tel" value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})}/></div>
+        <div style={S.fg}><label style={S.fl}>참여 인원 <span style={{fontSize:12,fontWeight:400,color:'#999'}}>(타임당 최대 {MAX_PERSONS}명)</span></label>
+          <div style={{display:'flex',alignItems:'center',gap:16}}>
+            <button style={S.cntBtn} onClick={()=>setForm({...form,count:Math.max(1,form.count-1)})}>−</button>
+            <span style={{fontSize:20,fontWeight:800,minWidth:50,textAlign:'center'}}>{form.count}명</span>
+            <button style={S.cntBtn} onClick={()=>setForm({...form,count:Math.min(maxC,form.count+1)})}>+</button>
+          </div>
+          {form.count>=maxC&&<div style={{marginTop:8,fontSize:12,color:'#e53935',fontWeight:600}}>⚠️ 이 타임의 최대 잔여 인원입니다</div>}
+        </div>
+        <div style={S.fg}><label style={S.fl}>결제 방식</label>
+          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+            <button style={{...S.payC,...(form.payment==='transfer'?S.payCG:{})}} onClick={()=>setForm({...form,payment:'transfer'})}><div style={{fontSize:28,marginBottom:6}}>🏦</div><div style={{fontSize:13,color:'#666',marginBottom:4}}>계좌이체</div><div style={{fontSize:14,fontWeight:700}}>1인 {fmt(PT)}</div></button>
+            <button style={{...S.payC,...(form.payment==='card'?S.payCO:{})}} onClick={()=>setForm({...form,payment:'card'})}><div style={{fontSize:28,marginBottom:6}}>💳</div><div style={{fontSize:13,color:'#666',marginBottom:4}}>현장 카드결제</div><div style={{fontSize:14,fontWeight:700}}>1인 {fmt(PC)}</div></button>
+          </div>
+        </div>
+        <div style={S.priceSum}><div style={{marginBottom:10}}><span style={{fontSize:13,color:'#888'}}>{form.payment==='transfer'?'계좌이체':'카드결제'} 1인 {fmt(up)} × {form.count}명</span></div>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',paddingTop:10,borderTop:'1px solid #f0f0f0'}}><span style={{fontSize:14,fontWeight:600}}>총 결제 금액</span><span style={{fontSize:22,fontWeight:900,color:'#FF6B35'}}>{fmt(tp)}</span></div>
+        </div>
+        {form.payment==='transfer'&&<div style={S.bankBox}>
+          <div style={S.bankT}>💡 입금 계좌 안내 (입금 시 예약 확정)</div><div style={S.bankA}>{BANK}</div>
+          <div style={{fontSize:14,color:'#333',marginBottom:4}}>입금 금액: <strong>{fmt(tp)}</strong></div>
+          <div style={{fontSize:12,color:'#999'}}>예약자명으로 입금 → 확인 문자 발송</div>
+        </div>}
+        <button style={{...S.ctaBtn,opacity:form.name&&form.phone?1:0.5,marginTop:4}} disabled={!form.name||!form.phone||submitting} onClick={handleReserve}>
+          {submitting?'처리 중...':'예약 신청하기 →'}
+        </button>
+      </div>}
+
+      {/* STEP 4: CONFIRM */}
+      {step===4 && <div style={{...S.stepW,animation:'fadeInUp 0.5s ease-out'}}>
+        <div style={{fontSize:60,textAlign:'center',marginBottom:12,animation:'bounceIn 0.6s ease-out'}}>📩</div>
+        <h2 style={{fontSize:26,fontWeight:900,textAlign:'center',marginBottom:12,letterSpacing:-1}}>예약 신청 완료!</h2>
+        <div style={S.confNotice}><div style={{fontSize:22,flexShrink:0}}>💡</div><div style={{fontSize:14,color:'#1565C0',lineHeight:1.6,whiteSpace:'pre-line'}}>입금 확인 후 예약이 <strong>최종 확정</strong>됩니다.{"\n"}안내 문자를 확인해주세요!</div></div>
+        <div style={S.confCard}>
+          <div style={S.confR}><span style={S.confL}>📅 날짜</span><span style={S.confV}>{selDate.label}</span></div><div style={S.confD}/>
+          <div style={S.confR}><span style={S.confL}>⏰ 시간</span><span style={S.confV}>{selTime}</span></div><div style={S.confD}/>
+          <div style={S.confR}><span style={S.confL}>👤 예약자</span><span style={S.confV}>{form.name}</span></div><div style={S.confD}/>
+          <div style={S.confR}><span style={S.confL}>👥 인원</span><span style={S.confV}>{form.count}명</span></div><div style={S.confD}/>
+          <div style={S.confR}><span style={S.confL}>💰 결제</span><span style={S.confV}>{form.payment==='transfer'?'계좌이체':'카드결제'} {fmt(tp)}</span></div>
+          <div style={{textAlign:'right',fontSize:12,color:'#999',paddingTop:4}}>1인 {fmt(up)} × {form.count}명</div>
+        </div>
+        {form.payment==='transfer'&&<div style={S.bankBox}><div style={S.bankT}>🏦 입금 계좌 (입금 시 예약 확정!)</div><div style={S.bankA}>{BANK}</div><div style={{fontSize:14,color:'#333',marginBottom:4}}>입금 금액: <strong>{fmt(tp)}</strong></div><div style={{fontSize:12,color:'#999'}}>예약자명으로 입금해주세요</div></div>}
+        {form.payment==='card'&&<div style={{...S.bankBox,background:'#FFF5F0',borderColor:'#FFD4C0'}}><div style={{...S.bankT,color:'#E65100'}}>💳 현장 카드결제 안내</div><div style={{fontSize:14,color:'#333',marginBottom:4}}>결제 금액: <strong>{fmt(tp)}</strong></div><div style={{fontSize:12,color:'#999'}}>현장 도착 후 카드결제 시 예약이 확정됩니다</div></div>}
+        <div style={{textAlign:'center',padding:'16px 0'}}>
+          {smsSent?<div style={{color:'#4caf50',fontSize:14,fontWeight:600,display:'flex',alignItems:'center',justifyContent:'center',gap:8}}><span style={{display:'inline-flex',width:22,height:22,borderRadius:'50%',background:'#4caf50',color:'#fff',fontSize:13,alignItems:'center',justifyContent:'center'}}>✓</span> 안내 문자가 발송되었습니다</div>
+          :<div style={{color:'#999',fontSize:14,display:'flex',alignItems:'center',justifyContent:'center',gap:8}}><div style={{width:18,height:18,border:'2px solid #eee',borderTopColor:'#FF6B35',borderRadius:'50%',animation:'spin 0.6s linear infinite'}}/> 문자 발송 중...</div>}
+        </div>
+        <a href="https://daangn.com/kr/share/community/ref/invite-group/8iXEGrbakS" target="_blank" rel="noopener noreferrer" style={{...S.ctaBtn,display:'block',textAlign:'center',textDecoration:'none',background:'linear-gradient(135deg,#FF6F0F,#FF9A3E)'}}>🎁 조립공간 풀셋트 무료체험 혜택 받기</a>
+      </div>}
+
+      <div style={{textAlign:'center',padding:20,borderTop:'1px solid #f0f0f0'}}><div style={{fontSize:12,color:'#bbb'}}>🧩 조립공간 | 완주 정월대보름 축제 2026</div></div>
+    </div>
+  );
+}
+
+// ===== STYLES =====
+const S = {
+  hero:{position:'relative',background:'linear-gradient(150deg,#FF6B35 0%,#FF8F5E 45%,#FFB347 100%)',padding:'56px 28px 48px',overflow:'hidden',borderRadius:'0 0 36px 36px'},
+  hBg1:{position:'absolute',top:-70,right:-50,width:220,height:220,borderRadius:'50%',background:'rgba(255,255,255,.07)'},
+  hBg2:{position:'absolute',bottom:-40,left:-40,width:160,height:160,borderRadius:'50%',background:'rgba(255,255,255,.05)'},
+  hBg3:{position:'absolute',top:40,left:'50%',width:100,height:100,borderRadius:'50%',background:'rgba(255,255,255,.04)'},
+  festTag:{display:'inline-block',background:'rgba(255,255,255,.2)',backdropFilter:'blur(10px)',color:'#fff',fontSize:13,fontWeight:600,padding:'6px 14px',borderRadius:20,marginBottom:18},
+  heroT:{fontFamily:"'Bagel Fat One','Noto Sans KR',sans-serif",color:'#fff',fontSize:52,fontWeight:400,margin:'0 0 10px',letterSpacing:-2,lineHeight:1},
+  heroS:{color:'rgba(255,255,255,.92)',fontSize:15,margin:0,lineHeight:1.5},
+  aboutCard:{background:'#fff',borderRadius:20,padding:'28px 24px',boxShadow:'0 4px 20px rgba(0,0,0,.06)',textAlign:'center'},
+  aboutH:{fontSize:19,fontWeight:800,margin:'0 0 14px',letterSpacing:-.5},
+  aboutP:{fontSize:14,color:'#555',lineHeight:1.8,margin:'0 0 10px',textAlign:'left'},
+  aboutP2:{fontSize:14,color:'#555',lineHeight:1.8,margin:0,textAlign:'left'},
+  secT:{fontSize:18,fontWeight:800,margin:'0 0 16px',textAlign:'center',letterSpacing:-.5},
+  howCard:{background:'#fff',borderRadius:18,padding:'22px 20px',boxShadow:'0 2px 10px rgba(0,0,0,.05)',position:'relative',display:'flex',flexDirection:'column',alignItems:'center',textAlign:'center'},
+  howBdg:{position:'absolute',top:-8,left:20,background:'#FFB347',color:'#fff',fontSize:10,fontWeight:800,padding:'4px 10px',borderRadius:10},
+  howT:{fontSize:16,fontWeight:800,marginBottom:6},
+  howD:{fontSize:13,color:'#888',lineHeight:1.5,whiteSpace:'pre-line'},
+  howHL:{marginTop:10,background:'#FFF8E1',color:'#F57F17',fontSize:13,fontWeight:700,padding:'8px 16px',borderRadius:10},
+  infoStrip:{display:'flex',justifyContent:'center',alignItems:'center',background:'#fff',margin:'24px 20px 0',borderRadius:18,padding:'20px 16px',boxShadow:'0 2px 10px rgba(0,0,0,.05)',gap:8},
+  infoI:{flex:1,textAlign:'center'},infoL:{fontSize:11,color:'#aaa',fontWeight:500,marginBottom:2},infoV:{fontSize:15,fontWeight:800},
+  infoDv:{width:1,height:44,background:'#eee'},
+  noticeBox:{display:'flex',alignItems:'center',gap:12,background:'#FFF3E0',margin:'20px 20px 0',borderRadius:14,padding:'16px 18px',border:'1px solid #FFE0B2'},
+  noticeT:{fontSize:13,color:'#E65100',lineHeight:1.6,whiteSpace:'pre-line'},
+  ctaSec:{padding:'28px 20px 4px',textAlign:'center'},
+  ctaBtn:{width:'100%',padding:'18px 24px',background:'linear-gradient(135deg,#FF6B35,#FF8F5E)',color:'#fff',border:'none',borderRadius:16,fontSize:18,fontWeight:700,cursor:'pointer',boxShadow:'0 6px 24px rgba(255,107,53,.35)',letterSpacing:-.5},
+  ctaSub:{marginTop:10,fontSize:13,color:'#bbb'},
+  admLink:{width:'100%',padding:14,background:'transparent',color:'#ddd',border:'none',fontSize:10,cursor:'pointer',letterSpacing:1},
+  progBar:{display:'flex',alignItems:'center',gap:12,padding:'16px 20px',background:'#fff',borderBottom:'1px solid #f0f0f0'},
+  progBack:{background:'none',border:'none',fontSize:20,color:'#FF6B35',cursor:'pointer',padding:'4px 8px',fontWeight:600},
+  progSteps:{display:'flex',flex:1,justifyContent:'center',gap:36},
+  pItem:{display:'flex',flexDirection:'column',alignItems:'center',gap:4},
+  pDot:{width:26,height:26,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:12,fontWeight:700,transition:'all .3s'},
+  stepW:{padding:'24px 20px 40px',animation:'fadeInUp 0.4s ease-out'},
+  stepT:{fontSize:20,fontWeight:800,margin:'0 0 20px',letterSpacing:-1},
+  dateCard:{background:'#fff',borderRadius:18,padding:'24px 16px',border:'2px solid #eee',cursor:'pointer',textAlign:'center'},
+  barBg:{height:6,borderRadius:3,background:'#eee',overflow:'hidden',marginBottom:8},
+  barFill:{height:'100%',borderRadius:3,background:'linear-gradient(90deg,#FF6B35,#FFB347)'},
+  timeSlot:{background:'#fff',borderRadius:12,padding:'14px 6px',border:'2px solid #eee',cursor:'pointer',textAlign:'center',position:'relative'},
+  timeFull:{background:'#f9f9f9',borderColor:'#f0f0f0',cursor:'not-allowed',opacity:.5},
+  urgBdg:{position:'absolute',top:-5,right:-5,background:'#e53935',color:'#fff',fontSize:9,fontWeight:700,padding:'2px 6px',borderRadius:8},
+  tag:{background:'#FFF5F0',color:'#FF6B35',fontSize:13,fontWeight:700,padding:'7px 14px',borderRadius:10,border:'1px solid #FFD4C0'},
+  fg:{marginBottom:20},fl:{display:'block',fontSize:13,fontWeight:700,color:'#333',marginBottom:8},
+  fi:{width:'100%',padding:'14px 16px',border:'2px solid #eee',borderRadius:12,fontSize:16,fontFamily:"'Noto Sans KR',sans-serif",outline:'none',boxSizing:'border-box'},
+  cntBtn:{width:44,height:44,borderRadius:12,border:'2px solid #eee',background:'#fff',fontSize:22,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'},
+  payC:{background:'#fff',borderRadius:14,padding:'18px 12px',border:'2px solid #eee',cursor:'pointer',textAlign:'center'},
+  payCG:{borderColor:'#4caf50',background:'#f1f8e9'},payCO:{borderColor:'#FF6B35',background:'#FFF5F0'},
+  priceSum:{background:'#fff',borderRadius:14,padding:'16px 18px',marginBottom:16,border:'1px solid #eee'},
+  bankBox:{background:'#FFFDE7',borderRadius:14,padding:'16px 18px',marginBottom:20,border:'1px solid #FFF9C4'},
+  bankT:{fontSize:13,fontWeight:700,color:'#F57F17',marginBottom:8},bankA:{fontSize:16,fontWeight:800,marginBottom:4},
+  confNotice:{display:'flex',alignItems:'flex-start',gap:10,background:'#E3F2FD',borderRadius:14,padding:'16px 18px',marginBottom:20,border:'1px solid #BBDEFB'},
+  confCard:{background:'#fff',borderRadius:16,padding:20,boxShadow:'0 2px 12px rgba(0,0,0,.08)',marginBottom:16},
+  confR:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'10px 0'},
+  confL:{fontSize:14,color:'#888'},confV:{fontSize:15,fontWeight:700},confD:{height:1,background:'#f0f0f0'},
+  // Admin
+  admBar:{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'16px 20px',background:'#1a1a1a',color:'#fff'},
+  admBack:{background:'none',border:'none',color:'#FF6B35',fontSize:14,fontWeight:600,cursor:'pointer'},
+  admTabs:{display:'flex',background:'#fff',borderBottom:'1px solid #eee'},
+  admTab:{flex:1,padding:'14px 8px',background:'none',border:'none',borderBottom:'3px solid transparent',fontSize:13,fontWeight:600,color:'#999',cursor:'pointer',textAlign:'center'},
+  admTabA:{color:'#FF6B35',borderBottomColor:'#FF6B35'},
+  admC:{padding:20,animation:'fadeInUp 0.3s ease-out'},
+  statGrid:{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:20},
+  statCard:{background:'#fff',borderRadius:14,padding:'18px 14px',textAlign:'center',boxShadow:'0 2px 8px rgba(0,0,0,.05)'},
+  statVal:{fontSize:20,fontWeight:900,marginBottom:2},statLbl:{fontSize:11,color:'#999'},
+  dayCard:{background:'#fff',borderRadius:14,padding:'16px 18px',marginBottom:12,boxShadow:'0 2px 8px rgba(0,0,0,.05)'},
+  refBtn:{width:'100%',padding:12,background:'#f5f5f5',color:'#333',border:'none',borderRadius:10,fontSize:14,fontWeight:600,cursor:'pointer',marginBottom:10},
+  rstBtn:{width:'100%',padding:12,background:'#ffebee',color:'#e53935',border:'none',borderRadius:10,fontSize:14,fontWeight:600,cursor:'pointer'},
+  bCard:{background:'#fff',borderRadius:14,marginBottom:10,overflow:'hidden',boxShadow:'0 2px 8px rgba(0,0,0,.05)'},
+  bTop:{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 16px',background:'#fafafa'},
+  bPay:{fontSize:11,fontWeight:700,padding:'4px 10px',borderRadius:6},
+  bActs:{display:'flex',borderTop:'1px solid #f0f0f0'},
+  bEdit:{flex:1,padding:12,background:'none',border:'none',borderRight:'1px solid #f0f0f0',fontSize:13,fontWeight:600,color:'#FF6B35',cursor:'pointer'},
+  bDel:{flex:1,padding:12,background:'none',border:'none',fontSize:13,fontWeight:600,color:'#e53935',cursor:'pointer'},
+  admDBtn:{flex:1,padding:12,background:'#fff',border:'2px solid #eee',borderRadius:12,fontSize:14,fontWeight:700,cursor:'pointer',textAlign:'center'},
+  admDBA:{borderColor:'#FF6B35',background:'#FFF5F0',color:'#FF6B35'},
+  // Modal
+  modal:{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:999,padding:20},
+  pwBox:{background:'#fff',borderRadius:20,padding:'32px 24px',width:'100%',maxWidth:340,textAlign:'center',boxShadow:'0 20px 60px rgba(0,0,0,.2)'},
+  modalIn:{background:'#fff',borderRadius:20,padding:'28px 24px',width:'100%',maxWidth:360,boxShadow:'0 20px 60px rgba(0,0,0,.2)'},
+  eg:{marginBottom:14},el:{display:'block',fontSize:12,fontWeight:700,color:'#666',marginBottom:4},
+  ei:{width:'100%',padding:'10px 14px',border:'2px solid #eee',borderRadius:10,fontSize:15,fontFamily:"'Noto Sans KR',sans-serif",outline:'none',boxSizing:'border-box'},
+  epb:{flex:1,padding:10,border:'2px solid #eee',borderRadius:10,background:'#fff',fontSize:13,fontWeight:600,cursor:'pointer',textAlign:'center'},
+  epbA:{borderColor:'#FF6B35',background:'#FFF5F0',color:'#FF6B35'},
+  esBtn:{flex:1,padding:14,background:'#FF6B35',color:'#fff',border:'none',borderRadius:12,fontSize:15,fontWeight:700,cursor:'pointer'},
+  ecBtn:{flex:1,padding:14,background:'#f5f5f5',color:'#666',border:'none',borderRadius:12,fontSize:15,fontWeight:600,cursor:'pointer'},
+};
+
+ReactDOM.render(React.createElement(App), document.getElementById('root'));
+</script>
+</body>
+</html>
