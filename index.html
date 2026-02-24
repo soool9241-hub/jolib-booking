@@ -60,6 +60,12 @@ function genSlots(sh, eh) {
   return s;
 }
 function fmt(n) { return n.toLocaleString()+'원'; }
+function fmtPhone(v) {
+  const n = v.replace(/[^0-9]/g, '').slice(0, 11);
+  if (n.length <= 3) return n;
+  if (n.length <= 7) return n.slice(0,3)+'-'+n.slice(3);
+  return n.slice(0,3)+'-'+n.slice(3,7)+'-'+n.slice(7);
+}
 
 function App() {
   const [step, setStep] = useState(0);
@@ -114,18 +120,21 @@ function App() {
 
     if (error) { alert('예약 실패: '+error.message); setSubmitting(false); return; }
     setLastBooking(data);
-    await loadData();
-    setStep(4);
 
-    // SMS 발송 (Edge Function)
+    // DB 저장 성공 즉시 SMS 발송
+    let smsOk = false;
     try {
-      await fetch(EDGE_FUNCTION_URL, {
+      const smsRes = await fetch(EDGE_FUNCTION_URL, {
         method: 'POST',
         headers: { 'Content-Type':'application/json', 'Authorization':'Bearer '+SUPABASE_ANON_KEY },
         body: JSON.stringify({ booking: data })
       });
+      smsOk = smsRes.ok;
     } catch(e) { console.log('SMS error:', e); }
-    setTimeout(() => setSmsSent(true), 1500);
+    setSmsSent(smsOk);
+
+    await loadData();
+    setStep(4);
     setSubmitting(false);
   };
 
@@ -346,7 +355,7 @@ function App() {
           <span style={{...S.tag,background:'#e8f5e9',color:'#2e7d32',borderColor:'#c8e6c9'}}>잔여 {maxC}명</span>
         </div>
         <div style={S.fg}><label style={S.fl}>예약자 이름</label><input style={S.fi} placeholder="이름을 입력해주세요" value={form.name} onChange={e=>setForm({...form,name:e.target.value})}/></div>
-        <div style={S.fg}><label style={S.fl}>연락처</label><input style={S.fi} placeholder="010-0000-0000" type="tel" value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})}/></div>
+        <div style={S.fg}><label style={S.fl}>연락처</label><input style={S.fi} placeholder="010-0000-0000" type="tel" value={form.phone} onChange={e=>setForm({...form,phone:fmtPhone(e.target.value)})}/></div>
         <div style={S.fg}><label style={S.fl}>참여 인원 <span style={{fontSize:12,fontWeight:400,color:'#999'}}>(타임당 최대 {MAX_PERSONS}명)</span></label>
           <div style={{display:'flex',alignItems:'center',gap:16}}>
             <button style={S.cntBtn} onClick={()=>setForm({...form,count:Math.max(1,form.count-1)})}>−</button>
@@ -357,7 +366,7 @@ function App() {
         </div>
         <div style={S.fg}><label style={S.fl}>결제 방식</label>
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
-            <button style={{...S.payC,...(form.payment==='transfer'?S.payCG:{})}} onClick={()=>setForm({...form,payment:'transfer'})}><div style={{fontSize:28,marginBottom:6}}>🏦</div><div style={{fontSize:13,color:'#666',marginBottom:4}}>계좌이체</div><div style={{fontSize:14,fontWeight:700}}>1인 {fmt(PT)}</div></button>
+            <button style={{...S.payC,...(form.payment==='transfer'?S.payCG:{}),position:'relative'}} onClick={()=>setForm({...form,payment:'transfer'})}><div style={{position:'absolute',top:-8,right:-8,background:'#e53935',color:'#fff',fontSize:10,fontWeight:800,padding:'3px 8px',borderRadius:10}}>추천</div><div style={{fontSize:28,marginBottom:6}}>🏦</div><div style={{fontSize:13,color:'#666',marginBottom:4}}>계좌이체</div><div style={{fontSize:14,fontWeight:700}}>1인 {fmt(PT)}</div></button>
             <button style={{...S.payC,...(form.payment==='card'?S.payCO:{})}} onClick={()=>setForm({...form,payment:'card'})}><div style={{fontSize:28,marginBottom:6}}>💳</div><div style={{fontSize:13,color:'#666',marginBottom:4}}>현장 카드결제</div><div style={{fontSize:14,fontWeight:700}}>1인 {fmt(PC)}</div></button>
           </div>
         </div>
