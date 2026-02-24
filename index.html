@@ -240,7 +240,7 @@ function App() {
               {pending.map((b,i)=><div key={b.id} style={{...S.bCard,borderLeft:'4px solid #FF6B35'}}>
                 <div style={S.bTop}><div><span style={{fontSize:12,fontWeight:700,color:'#FF6B35',marginRight:8}}>#{i+1}</span><span style={{fontSize:13,fontWeight:600}}>{b.date} {b.time}</span></div>
                 <div style={{...S.bPay,background:b.payment==='transfer'?'#e8f5e9':'#fff3e0',color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약':'카드'} {fmt(b.total_price)}</div></div>
-                <div style={{padding:'10px 16px'}}><div style={{fontWeight:700}}>{b.name} <span style={{fontWeight:400,color:'#888'}}>({b.count}명)</span></div><div style={{fontSize:13,color:'#666',marginTop:2}}>{b.phone}</div></div>
+                <div style={{padding:'10px 16px'}}><div style={{fontWeight:700}}>{b.name} <span style={{fontWeight:400,color:'#888'}}>({b.count}명)</span></div><div style={{fontSize:13,color:'#666',marginTop:2}}>{b.phone}</div><div style={{fontSize:12,color:'#888',marginTop:4}}>결제: <span style={{fontWeight:600,color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약(이체)':'현장카드'}</span></div></div>
                 <div style={S.bActs}><button style={{...S.bEdit,color:'#4caf50'}} onClick={()=>toggleStatus(b)}>✅ 입금완료</button><button style={S.bEdit} onClick={()=>startEdit(b)}>✏️ 수정</button><button style={S.bDel} onClick={()=>admCancel(b)}>🗑️ 취소</button></div>
               </div>)}
             </>})()}
@@ -250,7 +250,7 @@ function App() {
               {confirmed.map((b,i)=><div key={b.id} style={{...S.bCard,borderLeft:'4px solid #4caf50'}}>
                 <div style={S.bTop}><div><span style={{fontSize:12,fontWeight:700,color:'#4caf50',marginRight:8}}>#{i+1}</span><span style={{fontSize:13,fontWeight:600}}>{b.date} {b.time}</span></div>
                 <div style={{...S.bPay,background:b.payment==='transfer'?'#e8f5e9':'#fff3e0',color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약':'카드'} {fmt(b.total_price)}</div></div>
-                <div style={{padding:'10px 16px'}}><div style={{fontWeight:700}}>{b.name} <span style={{fontWeight:400,color:'#888'}}>({b.count}명)</span></div><div style={{fontSize:13,color:'#666',marginTop:2}}>{b.phone}</div></div>
+                <div style={{padding:'10px 16px'}}><div style={{fontWeight:700}}>{b.name} <span style={{fontWeight:400,color:'#888'}}>({b.count}명)</span></div><div style={{fontSize:13,color:'#666',marginTop:2}}>{b.phone}</div><div style={{fontSize:12,color:'#888',marginTop:4}}>결제: <span style={{fontWeight:600,color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약(이체)':'현장카드'}</span></div></div>
                 <div style={S.bActs}><button style={{...S.bEdit,color:'#FF6B35'}} onClick={()=>toggleStatus(b)}>⏳ 입금대기로</button><button style={S.bEdit} onClick={()=>startEdit(b)}>✏️ 수정</button><button style={S.bDel} onClick={()=>admCancel(b)}>🗑️ 취소</button></div>
               </div>)}
             </>})()}
