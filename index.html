@@ -71,7 +71,7 @@ function App() {
   const [step, setStep] = useState(0);
   const [selDate, setSelDate] = useState(null);
   const [selTime, setSelTime] = useState(null);
-  const [form, setForm] = useState({name:'',phone:'',count:1,payment:'transfer',children:[{gender:'',age:''}]});
+  const [form, setForm] = useState({name:'',phone:'',count:1,payment:'transfer',children:[{name:'',gender:'',age:''}]});
   const [bookings, setBookings] = useState([]);
   const [blocked, setBlocked] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -141,7 +141,7 @@ function App() {
 
   const reset = () => {
     setStep(0);setSelDate(null);setSelTime(null);
-    setForm({name:'',phone:'',count:1,payment:'transfer',children:[{gender:'',age:''}]});
+    setForm({name:'',phone:'',count:1,payment:'transfer',children:[{name:'',gender:'',age:''}]});
     setSmsSent(false);setLastBooking(null);
   };
 
@@ -246,7 +246,7 @@ function App() {
                 <div style={S.bTop}><div><span style={{fontSize:12,fontWeight:700,color:'#FF6B35',marginRight:8}}>#{i+1}</span><span style={{fontSize:13,fontWeight:600}}>{b.date} {b.time}</span></div>
                 <div style={{...S.bPay,background:b.payment==='transfer'?'#e8f5e9':'#fff3e0',color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약':'카드'} {fmt(b.total_price)}</div></div>
                 <div style={{padding:'10px 16px'}}><div style={{fontWeight:700}}>{b.name} <span style={{fontWeight:400,color:'#888'}}>({b.count}명)</span></div><div style={{fontSize:13,color:'#666',marginTop:2}}>{b.phone}</div><div style={{fontSize:12,color:'#888',marginTop:4}}>결제: <span style={{fontWeight:600,color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약(이체)':'현장카드'}</span></div>
-                {b.children&&b.children.length>0&&<div style={{marginTop:6,display:'flex',gap:6,flexWrap:'wrap'}}>{b.children.map((c,j)=><span key={j} style={{fontSize:11,fontWeight:600,background:c.gender==='남'?'#E3F2FD':'#FCE4EC',color:c.gender==='남'?'#1565C0':'#C2185B',padding:'3px 8px',borderRadius:8}}>{c.gender} {c.age}세</span>)}</div>}</div>
+                {b.children&&b.children.length>0&&<div style={{marginTop:6,display:'flex',gap:6,flexWrap:'wrap'}}>{b.children.map((c,j)=><span key={j} style={{fontSize:11,fontWeight:600,background:c.gender==='남'?'#E3F2FD':'#FCE4EC',color:c.gender==='남'?'#1565C0':'#C2185B',padding:'3px 8px',borderRadius:8}}>{c.name} ({c.gender}, {c.age}세)</span>)}</div>}</div>
                 <div style={S.bActs}><button style={{...S.bEdit,color:'#4caf50'}} onClick={()=>toggleStatus(b)}>✅ 입금완료</button><button style={S.bEdit} onClick={()=>startEdit(b)}>✏️ 수정</button><button style={S.bDel} onClick={()=>admCancel(b)}>🗑️ 취소</button></div>
               </div>)}
             </>}
@@ -257,7 +257,7 @@ function App() {
                 <div style={S.bTop}><div><span style={{fontSize:12,fontWeight:700,color:'#4caf50',marginRight:8}}>#{i+1}</span><span style={{fontSize:13,fontWeight:600}}>{b.date} {b.time}</span></div>
                 <div style={{...S.bPay,background:b.payment==='transfer'?'#e8f5e9':'#fff3e0',color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약':'카드'} {fmt(b.total_price)}</div></div>
                 <div style={{padding:'10px 16px'}}><div style={{fontWeight:700}}>{b.name} <span style={{fontWeight:400,color:'#888'}}>({b.count}명)</span></div><div style={{fontSize:13,color:'#666',marginTop:2}}>{b.phone}</div><div style={{fontSize:12,color:'#888',marginTop:4}}>결제: <span style={{fontWeight:600,color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약(이체)':'현장카드'}</span></div>
-                {b.children&&b.children.length>0&&<div style={{marginTop:6,display:'flex',gap:6,flexWrap:'wrap'}}>{b.children.map((c,j)=><span key={j} style={{fontSize:11,fontWeight:600,background:c.gender==='남'?'#E3F2FD':'#FCE4EC',color:c.gender==='남'?'#1565C0':'#C2185B',padding:'3px 8px',borderRadius:8}}>{c.gender} {c.age}세</span>)}</div>}</div>
+                {b.children&&b.children.length>0&&<div style={{marginTop:6,display:'flex',gap:6,flexWrap:'wrap'}}>{b.children.map((c,j)=><span key={j} style={{fontSize:11,fontWeight:600,background:c.gender==='남'?'#E3F2FD':'#FCE4EC',color:c.gender==='남'?'#1565C0':'#C2185B',padding:'3px 8px',borderRadius:8}}>{c.name} ({c.gender}, {c.age}세)</span>)}</div>}</div>
                 <div style={S.bActs}><button style={{...S.bEdit,color:'#FF6B35'}} onClick={()=>toggleStatus(b)}>⏳ 입금대기로</button><button style={S.bEdit} onClick={()=>startEdit(b)}>✏️ 수정</button><button style={S.bDel} onClick={()=>admCancel(b)}>🗑️ 취소</button></div>
               </div>)}
             </>}
@@ -365,7 +365,7 @@ function App() {
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8,maxHeight:420,overflowY:'auto'}}>
           {genSlots(selDate.startHour,selDate.endHour).map(sl=>{
             const blk=isBlk(selDate.key,sl);const rm=getRem(selDate.key,sl);const full=rm<=0;
-            return <button key={sl} style={{...S.timeSlot,...(full?S.timeFull:{})}} disabled={full} onClick={()=>{setSelTime(sl);setForm({...form,count:1,children:[{gender:'',age:''}]});setStep(3);}}>
+            return <button key={sl} style={{...S.timeSlot,...(full?S.timeFull:{})}} disabled={full} onClick={()=>{setSelTime(sl);setForm({...form,count:1,children:[{name:'',gender:'',age:''}]});setStep(3);}}>
               <div style={{fontSize:16,fontWeight:700,marginBottom:2}}>{sl}</div>
               <div style={{fontSize:11,fontWeight:600,color:full?'#ccc':rm<=1?'#e53935':'#4caf50'}}>{blk?'차단':full?'마감':rm+'명 남음'}</div>
               {rm===1&&!full&&<div style={S.urgBdg}>1자리!</div>}
@@ -386,7 +386,7 @@ function App() {
           <div style={{display:'flex',alignItems:'center',gap:16}}>
             <button style={S.cntBtn} onClick={()=>{const nc=Math.max(1,form.count-1);const ch=[...form.children];while(ch.length>nc)ch.pop();setForm({...form,count:nc,children:ch});}}>−</button>
             <span style={{fontSize:20,fontWeight:800,minWidth:50,textAlign:'center'}}>{form.count}명</span>
-            <button style={S.cntBtn} onClick={()=>{const nc=Math.min(maxC,form.count+1);const ch=[...form.children];while(ch.length<nc)ch.push({gender:'',age:''});setForm({...form,count:nc,children:ch});}}>+</button>
+            <button style={S.cntBtn} onClick={()=>{const nc=Math.min(maxC,form.count+1);const ch=[...form.children];while(ch.length<nc)ch.push({name:'',gender:'',age:''});setForm({...form,count:nc,children:ch});}}>+</button>
           </div>
           {form.count>=maxC&&<div style={{marginTop:8,fontSize:12,color:'#e53935',fontWeight:600}}>⚠️ 이 타임의 최대 잔여 인원입니다</div>}
         </div>
@@ -394,6 +394,10 @@ function App() {
           <div style={{display:'flex',flexDirection:'column',gap:10}}>
             {form.children.map((c,i)=><div key={i} style={{background:'#fff',border:'2px solid #eee',borderRadius:12,padding:'14px 16px'}}>
               <div style={{fontSize:13,fontWeight:700,color:'#FF6B35',marginBottom:10}}>아이 {i+1}</div>
+              <div style={{display:'flex',gap:8,alignItems:'center',marginBottom:10}}>
+                <span style={{fontSize:13,fontWeight:600,color:'#555',minWidth:40}}>이름</span>
+                <input style={{...S.fi,flex:1,padding:'8px 12px'}} placeholder="아이 이름" value={c.name} onChange={e=>{const ch=[...form.children];ch[i]={...ch[i],name:e.target.value};setForm({...form,children:ch});}}/>
+              </div>
               <div style={{display:'flex',gap:8,marginBottom:10}}>
                 <span style={{fontSize:13,fontWeight:600,color:'#555',minWidth:40,lineHeight:'36px'}}>성별</span>
                 <button style={{flex:1,padding:'8px 0',border:'2px solid '+(c.gender==='남'?'#2196F3':'#eee'),borderRadius:8,background:c.gender==='남'?'#E3F2FD':'#fff',fontSize:13,fontWeight:600,color:c.gender==='남'?'#1565C0':'#999',cursor:'pointer'}} onClick={()=>{const ch=[...form.children];ch[i]={...ch[i],gender:'남'};setForm({...form,children:ch});}}>남자</button>
@@ -417,7 +421,7 @@ function App() {
           <div style={{marginBottom:10}}><span style={{fontSize:13,color:'#888'}}>1인 {fmt(up)} × {form.count}명</span></div>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',paddingTop:10,borderTop:'1px solid #f0f0f0'}}><span style={{fontSize:14,fontWeight:600}}>총 결제 금액</span><span style={{fontSize:22,fontWeight:900,color:'#FF6B35'}}>{fmt(tp)}</span></div>
         </div>
-        <button style={{...S.ctaBtn,opacity:form.name&&form.phone&&form.children.every(c=>c.gender&&c.age)?1:0.5,marginTop:4}} disabled={!form.name||!form.phone||!form.children.every(c=>c.gender&&c.age)||submitting} onClick={handleReserve}>
+        <button style={{...S.ctaBtn,opacity:form.name&&form.phone&&form.children.every(c=>c.name&&c.gender&&c.age)?1:0.5,marginTop:4}} disabled={!form.name||!form.phone||!form.children.every(c=>c.name&&c.gender&&c.age)||submitting} onClick={handleReserve}>
           {submitting?'처리 중...':'사전예약하고 할인받기 →'}
         </button>
       </div>}
@@ -432,7 +436,7 @@ function App() {
           <div style={S.confR}><span style={S.confL}>⏰ 시간</span><span style={S.confV}>{selTime}</span></div><div style={S.confD}/>
           <div style={S.confR}><span style={S.confL}>👤 예약자</span><span style={S.confV}>{form.name}</span></div><div style={S.confD}/>
           <div style={S.confR}><span style={S.confL}>👥 인원</span><span style={S.confV}>{form.count}명</span></div>
-          <div style={{padding:'8px 0 4px',display:'flex',gap:6,flexWrap:'wrap'}}>{form.children.map((c,j)=><span key={j} style={{fontSize:11,fontWeight:600,background:c.gender==='남'?'#E3F2FD':'#FCE4EC',color:c.gender==='남'?'#1565C0':'#C2185B',padding:'3px 8px',borderRadius:8}}>아이{j+1}: {c.gender} {c.age}세</span>)}</div><div style={S.confD}/>
+          <div style={{padding:'8px 0 4px',display:'flex',gap:6,flexWrap:'wrap'}}>{form.children.map((c,j)=><span key={j} style={{fontSize:11,fontWeight:600,background:c.gender==='남'?'#E3F2FD':'#FCE4EC',color:c.gender==='남'?'#1565C0':'#C2185B',padding:'3px 8px',borderRadius:8}}>{c.name} ({c.gender}, {c.age}세)</span>)}</div><div style={S.confD}/>
           <div style={S.confR}><span style={S.confL}>💰 금액</span><span style={S.confV}>{fmt(tp)}</span></div>
           <div style={{textAlign:'right',fontSize:12,color:'#999',paddingTop:4}}>1인 {fmt(up)} × {form.count}명</div>
         </div>
