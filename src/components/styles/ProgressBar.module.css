@@ -1,0 +1,45 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: #fff;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  color: #FF6B35;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-weight: 600;
+}
+
+.steps {
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  gap: 36px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.dot {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.3s;
+}

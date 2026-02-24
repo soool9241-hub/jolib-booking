@@ -1,0 +1,133 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+}
+
+.pwBox {
+  background: #fff;
+  border-radius: 20px;
+  padding: 32px 24px;
+  width: 100%;
+  max-width: 340px;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.pwInput {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  font-size: 18px;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+  outline: none;
+  box-sizing: border-box;
+  text-align: center;
+  letter-spacing: 8px;
+}
+
+.pwError {
+  color: #e53935;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.btnRow {
+  display: flex;
+  gap: 8px;
+  margin-top: 16px;
+  width: 100%;
+}
+
+.okBtn {
+  flex: 1;
+  padding: 14px;
+  background: #FF6B35;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+}
+
+.cancelBtn {
+  flex: 1;
+  padding: 14px;
+  background: #f5f5f5;
+  color: #666;
+  border: none;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+}
+
+/* Edit Modal */
+.editBox {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 24px;
+  width: 100%;
+  max-width: 360px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.editGroup {
+  margin-bottom: 14px;
+}
+
+.editLabel {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.editInput {
+  width: 100%;
+  padding: 10px 14px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  font-size: 15px;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.payBtnRow {
+  display: flex;
+  gap: 8px;
+}
+
+.payBtn {
+  flex: 1;
+  padding: 10px;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+}
+
+.payBtnActive {
+  border-color: #FF6B35;
+  background: #FFF5F0;
+  color: #FF6B35;
+}

@@ -1,0 +1,169 @@
+.wrapper {
+  padding: 24px 20px 40px;
+  animation: fadeInUp 0.5s ease-out;
+}
+
+.icon {
+  font-size: 60px;
+  text-align: center;
+  margin-bottom: 12px;
+  animation: bounceIn 0.6s ease-out;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: 900;
+  text-align: center;
+  margin-bottom: 12px;
+  letter-spacing: -1px;
+}
+
+.notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: #E3F2FD;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  border: 1px solid #BBDEFB;
+}
+
+.noticeText {
+  font-size: 14px;
+  color: #1565C0;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.rowLabel {
+  font-size: 14px;
+  color: #888;
+}
+
+.rowValue {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.divider {
+  height: 1px;
+  background: #f0f0f0;
+}
+
+.childTags {
+  padding: 8px 0 4px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.childTag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 8px;
+}
+
+.bankBox {
+  background: #FFFDE7;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  border: 1px solid #FFF9C4;
+}
+
+.bankBoxCard {
+  background: #FFF5F0;
+  border-color: #FFD4C0;
+}
+
+.bankTitle {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.bankAccount {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.smsStatus {
+  text-align: center;
+  padding: 16px 0;
+}
+
+.smsSent {
+  color: #4caf50;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.smsCheck {
+  display: inline-flex;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #4caf50;
+  color: #fff;
+  font-size: 13px;
+  align-items: center;
+  justify-content: center;
+}
+
+.smsPending {
+  color: #999;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.smsSpinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #eee;
+  border-top-color: #FF6B35;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.inviteBtn {
+  display: block;
+  width: 100%;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #FF6F0F, #FF9A3E);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(255, 107, 53, 0.35);
+  letter-spacing: -0.5px;
+  text-align: center;
+  text-decoration: none;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+}

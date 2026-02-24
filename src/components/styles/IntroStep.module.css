@@ -1,0 +1,252 @@
+.hero {
+  position: relative;
+  background: linear-gradient(150deg, #FF6B35 0%, #FF8F5E 45%, #FFB347 100%);
+  padding: 56px 28px 48px;
+  overflow: hidden;
+  border-radius: 0 0 36px 36px;
+}
+
+.heroBg1 {
+  position: absolute;
+  top: -70px;
+  right: -50px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.heroBg2 {
+  position: absolute;
+  bottom: -40px;
+  left: -40px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.heroBg3 {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 1;
+}
+
+.festTag {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 20px;
+  margin-bottom: 18px;
+}
+
+.heroTitle {
+  font-family: var(--font-bagel-fat-one), 'Noto Sans KR', sans-serif;
+  color: #fff;
+  font-size: 52px;
+  font-weight: 400;
+  margin: 0 0 10px;
+  letter-spacing: -2px;
+  line-height: 1;
+}
+
+.heroSub {
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 15px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.aboutCard {
+  background: #fff;
+  border-radius: 20px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  text-align: center;
+}
+
+.aboutH {
+  font-size: 19px;
+  font-weight: 800;
+  margin: 0 0 14px;
+  letter-spacing: -0.5px;
+}
+
+.aboutP {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.8;
+  margin: 0 0 10px;
+  text-align: left;
+}
+
+.aboutP2 {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.8;
+  margin: 0;
+  text-align: left;
+}
+
+.secTitle {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0 0 16px;
+  text-align: center;
+  letter-spacing: -0.5px;
+}
+
+.howList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.howCard {
+  background: #fff;
+  border-radius: 18px;
+  padding: 22px 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.howBadge {
+  position: absolute;
+  top: -8px;
+  left: 20px;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 10px;
+}
+
+.howTitle {
+  font-size: 16px;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.howDesc {
+  font-size: 13px;
+  color: #888;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+.howHL {
+  margin-top: 10px;
+  background: #FFF8E1;
+  color: #F57F17;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: 10px;
+}
+
+.infoStrip {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  margin: 24px 20px 0;
+  border-radius: 18px;
+  padding: 20px 16px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  gap: 8px;
+}
+
+.infoItem {
+  flex: 1;
+  text-align: center;
+}
+
+.infoLabel {
+  font-size: 11px;
+  color: #aaa;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.infoValue {
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.infoDivider {
+  width: 1px;
+  height: 44px;
+  background: #eee;
+}
+
+.noticeBox {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #FFF3E0;
+  margin: 20px 20px 0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  border: 1px solid #FFE0B2;
+}
+
+.noticeText {
+  font-size: 13px;
+  color: #E65100;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.ctaSection {
+  padding: 28px 20px 4px;
+  text-align: center;
+}
+
+.ctaBtn {
+  width: 100%;
+  padding: 18px 24px;
+  background: linear-gradient(135deg, #FF6B35, #FF8F5E);
+  color: #fff;
+  border: none;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 24px rgba(255, 107, 53, 0.35);
+  letter-spacing: -0.5px;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+}
+
+.ctaSub {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #bbb;
+}
+
+.adminLink {
+  width: 100%;
+  padding: 14px;
+  background: transparent;
+  color: #ddd;
+  border: none;
+  font-size: 10px;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
