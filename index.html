@@ -84,6 +84,7 @@ function App() {
   const [pw, setPw] = useState('');
   const [pwErr, setPwErr] = useState(false);
   const [admTab, setAdmTab] = useState('overview');
+  const [bkTab, setBkTab] = useState('pending');
   const [admDate, setAdmDate] = useState(DATES[0]);
   const [editing, setEditing] = useState(null);
   const [editF, setEditF] = useState({});
@@ -232,28 +233,32 @@ function App() {
               <div style={{display:'flex',gap:8,marginTop:16}}><button style={S.esBtn} onClick={saveEdit}>저장</button><button style={S.ecBtn} onClick={()=>setEditing(null)}>취소</button></div>
             </div></div>}
 
-            <button style={S.refBtn} onClick={loadData}>🔄 새로고침</button>
-            {bookings.length===0 && <div style={{textAlign:'center',padding:40,color:'#ccc'}}>예약이 없습니다</div>}
+            <div style={{display:'flex',marginBottom:16,borderRadius:12,overflow:'hidden',border:'2px solid #eee'}}>
+              <button style={{flex:1,padding:'12px 0',border:'none',fontSize:13,fontWeight:700,cursor:'pointer',background:bkTab==='pending'?'#FF6B35':'#fff',color:bkTab==='pending'?'#fff':'#999'}} onClick={()=>setBkTab('pending')}>⏳ 입금대기 ({bookings.filter(b=>b.status!=='입금완료').length})</button>
+              <button style={{flex:1,padding:'12px 0',border:'none',fontSize:13,fontWeight:700,cursor:'pointer',background:bkTab==='confirmed'?'#4caf50':'#fff',color:bkTab==='confirmed'?'#fff':'#999'}} onClick={()=>setBkTab('confirmed')}>✅ 입금완료 ({bookings.filter(b=>b.status==='입금완료').length})</button>
+            </div>
 
-            {(()=>{const pending=bookings.filter(b=>b.status!=='입금완료').sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));return pending.length>0&&<>
-              <div style={{fontSize:15,fontWeight:800,margin:'16px 0 10px',color:'#e65100',display:'flex',alignItems:'center',gap:8}}>⏳ 입금대기 <span style={{fontSize:12,fontWeight:600,background:'#fff3e0',color:'#e65100',padding:'2px 10px',borderRadius:10}}>{pending.length}건</span></div>
-              {pending.map((b,i)=><div key={b.id} style={{...S.bCard,borderLeft:'4px solid #FF6B35'}}>
+            <button style={S.refBtn} onClick={loadData}>🔄 새로고침</button>
+
+            {bkTab==='pending' && <>
+              {bookings.filter(b=>b.status!=='입금완료').length===0 && <div style={{textAlign:'center',padding:40,color:'#ccc'}}>입금대기 예약이 없습니다</div>}
+              {bookings.filter(b=>b.status!=='입금완료').sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)).map((b,i)=><div key={b.id} style={{...S.bCard,borderLeft:'4px solid #FF6B35'}}>
                 <div style={S.bTop}><div><span style={{fontSize:12,fontWeight:700,color:'#FF6B35',marginRight:8}}>#{i+1}</span><span style={{fontSize:13,fontWeight:600}}>{b.date} {b.time}</span></div>
                 <div style={{...S.bPay,background:b.payment==='transfer'?'#e8f5e9':'#fff3e0',color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약':'카드'} {fmt(b.total_price)}</div></div>
                 <div style={{padding:'10px 16px'}}><div style={{fontWeight:700}}>{b.name} <span style={{fontWeight:400,color:'#888'}}>({b.count}명)</span></div><div style={{fontSize:13,color:'#666',marginTop:2}}>{b.phone}</div><div style={{fontSize:12,color:'#888',marginTop:4}}>결제: <span style={{fontWeight:600,color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약(이체)':'현장카드'}</span></div></div>
                 <div style={S.bActs}><button style={{...S.bEdit,color:'#4caf50'}} onClick={()=>toggleStatus(b)}>✅ 입금완료</button><button style={S.bEdit} onClick={()=>startEdit(b)}>✏️ 수정</button><button style={S.bDel} onClick={()=>admCancel(b)}>🗑️ 취소</button></div>
               </div>)}
-            </>})()}
+            </>}
 
-            {(()=>{const confirmed=bookings.filter(b=>b.status==='입금완료').sort((a,b)=>new Date(a.created_at)-new Date(b.created_at));return confirmed.length>0&&<>
-              <div style={{fontSize:15,fontWeight:800,margin:'24px 0 10px',color:'#4caf50',display:'flex',alignItems:'center',gap:8}}>✅ 입금완료 <span style={{fontSize:12,fontWeight:600,background:'#e8f5e9',color:'#2e7d32',padding:'2px 10px',borderRadius:10}}>{confirmed.length}건</span></div>
-              {confirmed.map((b,i)=><div key={b.id} style={{...S.bCard,borderLeft:'4px solid #4caf50'}}>
+            {bkTab==='confirmed' && <>
+              {bookings.filter(b=>b.status==='입금완료').length===0 && <div style={{textAlign:'center',padding:40,color:'#ccc'}}>입금완료 예약이 없습니다</div>}
+              {bookings.filter(b=>b.status==='입금완료').sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)).map((b,i)=><div key={b.id} style={{...S.bCard,borderLeft:'4px solid #4caf50'}}>
                 <div style={S.bTop}><div><span style={{fontSize:12,fontWeight:700,color:'#4caf50',marginRight:8}}>#{i+1}</span><span style={{fontSize:13,fontWeight:600}}>{b.date} {b.time}</span></div>
                 <div style={{...S.bPay,background:b.payment==='transfer'?'#e8f5e9':'#fff3e0',color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약':'카드'} {fmt(b.total_price)}</div></div>
                 <div style={{padding:'10px 16px'}}><div style={{fontWeight:700}}>{b.name} <span style={{fontWeight:400,color:'#888'}}>({b.count}명)</span></div><div style={{fontSize:13,color:'#666',marginTop:2}}>{b.phone}</div><div style={{fontSize:12,color:'#888',marginTop:4}}>결제: <span style={{fontWeight:600,color:b.payment==='transfer'?'#2e7d32':'#e65100'}}>{b.payment==='transfer'?'사전예약(이체)':'현장카드'}</span></div></div>
                 <div style={S.bActs}><button style={{...S.bEdit,color:'#FF6B35'}} onClick={()=>toggleStatus(b)}>⏳ 입금대기로</button><button style={S.bEdit} onClick={()=>startEdit(b)}>✏️ 수정</button><button style={S.bDel} onClick={()=>admCancel(b)}>🗑️ 취소</button></div>
               </div>)}
-            </>})()}
+            </>}
           </>}
 
           {admTab==='slots' && <>
