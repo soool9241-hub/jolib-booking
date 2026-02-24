@@ -1,4 +1,4 @@
-import { fmt } from '@/utils/helpers';
+import { fmt, columnsToChildren } from '@/utils/helpers';
 import s from '../styles/AdminPanel.module.css';
 
 export default function BookingsTab({ bookings, bkTab, setBkTab, toggleStatus, startEdit, admCancel, loadData }) {
@@ -27,18 +27,21 @@ export default function BookingsTab({ bookings, bkTab, setBkTab, toggleStatus, s
             {b.payment === 'transfer' ? '사전예약(이체)' : '현장카드'}
           </span>
         </div>
-        {b.children && b.children.length > 0 && (
-          <div style={{ marginTop: 6, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-            {b.children.map((c, j) => (
-              <span key={j} className={s.childTag} style={{
-                background: c.gender === '남' ? '#E3F2FD' : '#FCE4EC',
-                color: c.gender === '남' ? '#1565C0' : '#C2185B',
-              }}>
-                {c.name} ({c.gender}, {c.age}세)
-              </span>
-            ))}
-          </div>
-        )}
+        {(() => {
+          const ch = columnsToChildren(b);
+          return ch.length > 0 && (
+            <div style={{ marginTop: 6, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {ch.map((c, j) => (
+                <span key={j} className={s.childTag} style={{
+                  background: c.gender === '남' ? '#E3F2FD' : '#FCE4EC',
+                  color: c.gender === '남' ? '#1565C0' : '#C2185B',
+                }}>
+                  {c.name} ({c.gender}, {c.age}세)
+                </span>
+              ))}
+            </div>
+          );
+        })()}
       </div>
       <div className={s.bActions}>
         <button className={s.bEditBtn} style={{ color: isPending ? '#4caf50' : '#FF6B35' }} onClick={() => toggleStatus(b)}>

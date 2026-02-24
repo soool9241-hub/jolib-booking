@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, EDGE_FUNCTION_URL, SUPABASE_ANON_KEY } from '@/lib/supabase';
 import { DATES, MAX_PERSONS, PT, PC, ADMIN_PW } from '@/lib/constants';
+import { childrenToColumns, columnsToChildren } from '@/utils/helpers';
 
 import IntroStep from './steps/IntroStep';
 import DateStep from './steps/DateStep';
@@ -66,7 +67,7 @@ export default function BookingApp() {
     const { data, error } = await supabase.from('bookings').insert({
       name: form.name, phone: form.phone, count: form.count,
       payment: form.payment, date: selDate.key, time: selTime,
-      total_price: tp, status: '입금대기', children: form.children,
+      total_price: tp, status: '입금대기', ...childrenToColumns(form.children),
     }).select().single();
 
     if (error) { alert('예약 실패: ' + error.message); setSubmitting(false); return; }
