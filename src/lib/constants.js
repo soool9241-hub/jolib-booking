@@ -1,5 +1,5 @@
 export const DATES = [
-  { key: '2/28 (토)', label: '2/28 (토)', day: 1, startHour: 10, endHour: 20 },
+  { key: '2/28 (토)', label: '2/28 (토)', day: 1, startHour: 11, endHour: 20 },
   { key: '3/1 (일)', label: '3/1 (일)', day: 2, startHour: 10, endHour: 17 },
 ];
 
