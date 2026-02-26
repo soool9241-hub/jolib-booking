@@ -46,26 +46,26 @@
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
   color: #fff;
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
-  padding: 6px 14px;
+  padding: 7px 16px;
   border-radius: 20px;
   margin-bottom: 18px;
 }
 
 .heroTitle {
-  font-family: var(--font-bagel-fat-one), 'Noto Sans KR', sans-serif;
+  font-family: var(--font-noto-sans-kr), sans-serif;
   color: #fff;
-  font-size: 52px;
-  font-weight: 400;
-  margin: 0 0 10px;
-  letter-spacing: -2px;
-  line-height: 1;
+  font-size: 40px;
+  font-weight: 900;
+  margin: 0 0 12px;
+  letter-spacing: -1px;
+  line-height: 1.2;
 }
 
 .heroSub {
   color: rgba(255, 255, 255, 0.92);
-  font-size: 15px;
+  font-size: 17px;
   margin: 0;
   line-height: 1.5;
 }
@@ -79,14 +79,14 @@
 }
 
 .aboutH {
-  font-size: 19px;
+  font-size: 22px;
   font-weight: 800;
   margin: 0 0 14px;
   letter-spacing: -0.5px;
 }
 
 .aboutP {
-  font-size: 14px;
+  font-size: 16px;
   color: #555;
   line-height: 1.8;
   margin: 0 0 10px;
@@ -94,7 +94,7 @@
 }
 
 .aboutP2 {
-  font-size: 14px;
+  font-size: 16px;
   color: #555;
   line-height: 1.8;
   margin: 0;
@@ -102,7 +102,7 @@
 }
 
 .secTitle {
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 800;
   margin: 0 0 16px;
   text-align: center;
@@ -132,20 +132,20 @@
   top: -8px;
   left: 20px;
   color: #fff;
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 800;
-  padding: 4px 10px;
+  padding: 5px 12px;
   border-radius: 10px;
 }
 
 .howTitle {
-  font-size: 16px;
+  font-size: 19px;
   font-weight: 800;
   margin-bottom: 6px;
 }
 
 .howDesc {
-  font-size: 13px;
+  font-size: 15px;
   color: #888;
   line-height: 1.5;
   white-space: pre-line;
@@ -179,14 +179,14 @@
 }
 
 .infoLabel {
-  font-size: 11px;
+  font-size: 13px;
   color: #aaa;
   font-weight: 500;
   margin-bottom: 2px;
 }
 
 .infoValue {
-  font-size: 15px;
+  font-size: 18px;
   font-weight: 800;
 }
 
@@ -208,7 +208,7 @@
 }
 
 .noticeText {
-  font-size: 13px;
+  font-size: 15px;
   color: #E65100;
   line-height: 1.6;
   white-space: pre-line;
@@ -226,7 +226,7 @@
   color: #fff;
   border: none;
   border-radius: 16px;
-  font-size: 18px;
+  font-size: 21px;
   font-weight: 700;
   cursor: pointer;
   box-shadow: 0 6px 24px rgba(255, 107, 53, 0.35);
@@ -236,7 +236,7 @@
 
 .ctaSub {
   margin-top: 10px;
-  font-size: 13px;
+  font-size: 15px;
   color: #bbb;
 }
 
