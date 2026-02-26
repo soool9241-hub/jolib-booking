@@ -17,21 +17,21 @@ const bagelFatOne = Bagel_Fat_One({
 
 export const metadata = {
   metadataBase: new URL('https://jolib-booking.vercel.app'),
-  title: '조립공간 - 모듈형 조립 체험 예약',
-  description: '완주 정월대보름 축제 - 조립공간 체험 예약',
+  title: '달토끼집 만들기 - 완주 정월대보름 한마당',
+  description: '완주 정월대보름 한마당 - 달토끼집 만들기 체험 예약',
   openGraph: {
     type: 'website',
-    title: '조립공간 - 모듈형 조립 체험 예약',
-    description: '끼우고 · 쌓고 · 만드는 모듈형 조립 체험! 완주 정월대보름 축제 2026 🧩 사전예약 시 1,000원 할인',
+    title: '달토끼집 만들기 - 완주 정월대보름 한마당',
+    description: '🌕 완주 둔산공원에 놀러온 달토끼들에게 쉬어가는 집을 만들어 주세요! 사전예약 시 1,000원 할인',
     url: 'https://jolib-booking.vercel.app',
-    siteName: '조립공간',
+    siteName: '달토끼집 만들기',
     locale: 'ko_KR',
     images: [{ url: '/og-image.jpg' }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '조립공간 - 모듈형 조립 체험 예약',
-    description: '끼우고 · 쌓고 · 만드는 모듈형 조립 체험! 완주 정월대보름 축제 2026',
+    title: '달토끼집 만들기 - 완주 정월대보름 한마당',
+    description: '🌕 완주 둔산공원에 놀러온 달토끼들에게 쉬어가는 집을 만들어 주세요!',
     images: ['/og-image.jpg'],
   },
 };
