@@ -1,5 +1,33 @@
+import * as XLSX from 'xlsx';
 import { fmt, columnsToChildren } from '@/utils/helpers';
 import s from '../styles/AdminPanel.module.css';
+
+function downloadExcel(bookings) {
+  const rows = bookings.map((b, i) => {
+    const ch = columnsToChildren(b);
+    const childrenStr = ch.map(c => `${c.name}(${c.gender},${c.age}세)`).join(' / ');
+    return {
+      '번호': i + 1,
+      '날짜': b.date,
+      '시간': b.time,
+      '이름': b.name,
+      '전화번호': b.phone,
+      '인원': b.count,
+      '결제방식': b.payment === 'transfer' ? '사전예약(이체)' : '현장카드',
+      '금액': b.total_price,
+      '상태': b.status,
+      '아이정보': childrenStr,
+    };
+  });
+  const ws = XLSX.utils.json_to_sheet(rows);
+  ws['!cols'] = [
+    { wch: 5 }, { wch: 10 }, { wch: 8 }, { wch: 10 }, { wch: 15 },
+    { wch: 5 }, { wch: 14 }, { wch: 10 }, { wch: 10 }, { wch: 30 },
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, '예약목록');
+  XLSX.writeFile(wb, `예약자리스트_${new Date().toISOString().slice(0, 10)}.xlsx`);
+}
 
 export default function BookingsTab({ bookings, bkTab, setBkTab, toggleStatus, startEdit, admCancel, loadData }) {
   const pending = bookings.filter(b => b.status !== '입금완료');
@@ -64,7 +92,10 @@ export default function BookingsTab({ bookings, bkTab, setBkTab, toggleStatus, s
         </button>
       </div>
 
-      <button className={s.refreshBtn} onClick={loadData}>🔄 새로고침</button>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
+        <button className={s.refreshBtn} style={{ flex: 1, margin: 0 }} onClick={loadData}>🔄 새로고침</button>
+        <button className={s.refreshBtn} style={{ flex: 1, margin: 0, background: '#2e7d32', color: '#fff' }} onClick={() => downloadExcel(bookings)}>📥 엑셀 다운로드</button>
+      </div>
 
       {bkTab === 'pending' && (
         <>
