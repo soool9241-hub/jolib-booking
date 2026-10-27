@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx';
 import { fmt, columnsToChildren } from '@/utils/helpers';
 import s from '../styles/AdminPanel.module.css';
 
-function downloadExcel(bookings) {
+function downloadExcel(bookings, project) {
   const rows = bookings.map((b, i) => {
     const ch = columnsToChildren(b);
     const childrenStr = ch.map(c => `${c.name}(${c.gender},${c.age}세)`).join(' / ');
@@ -26,10 +26,10 @@ function downloadExcel(bookings) {
   ];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '예약목록');
-  XLSX.writeFile(wb, `예약자리스트_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  XLSX.writeFile(wb, `예약자리스트_${project.name}_${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
 
-export default function BookingsTab({ bookings, bkTab, setBkTab, toggleStatus, startEdit, admCancel, loadData }) {
+export default function BookingsTab({ project, bookings, bkTab, setBkTab, toggleStatus, startEdit, admCancel, loadData }) {
   const pending = bookings.filter(b => b.status !== '입금완료');
   const confirmed = bookings.filter(b => b.status === '입금완료');
 
@@ -94,7 +94,7 @@ export default function BookingsTab({ bookings, bkTab, setBkTab, toggleStatus, s
 
       <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
         <button className={s.refreshBtn} style={{ flex: 1, margin: 0 }} onClick={loadData}>🔄 새로고침</button>
-        <button className={s.refreshBtn} style={{ flex: 1, margin: 0, background: '#2e7d32', color: '#fff' }} onClick={() => downloadExcel(bookings)}>📥 엑셀 다운로드</button>
+        <button className={s.refreshBtn} style={{ flex: 1, margin: 0, background: '#2e7d32', color: '#fff' }} onClick={() => downloadExcel(bookings, project)}>📥 엑셀 다운로드</button>
       </div>
 
       {bkTab === 'pending' && (

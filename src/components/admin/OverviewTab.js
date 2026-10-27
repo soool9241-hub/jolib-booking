@@ -1,12 +1,15 @@
-import { DATES, MAX_PERSONS } from '@/lib/constants';
 import { genSlots, fmt } from '@/utils/helpers';
 import s from '../styles/AdminPanel.module.css';
 
-export default function OverviewTab({ bookings, blocked, totBooked, totRev, isBlk, loadData, admReset }) {
+export default function OverviewTab({ project, bookings, blocked, totBooked, totRev, isBlk, loadData, admReset }) {
+  const { dates: DATES, maxPersons: MAX_PERSONS, slotMinutes } = project;
+  const preBooked = Object.values(project.preBooked || {}).flatMap(o => Object.values(o)).reduce((a, b) => a + b, 0);
+
   // 예약율
-  const totalSlots = DATES.reduce((sum, d) => sum + genSlots(d.startHour, d.endHour).length, 0);
+  const totalSlots = DATES.reduce((sum, d) => sum + genSlots(d.startHour, d.endHour, slotMinutes).length, 0);
   const totalCapacity = totalSlots * MAX_PERSONS;
-  const bookingRate = totalCapacity ? Math.round(totBooked / totalCapacity * 100) : 0;
+  const filled = totBooked + preBooked; // 구글폼 선예약 포함
+  const bookingRate = totalCapacity ? Math.round(filled / totalCapacity * 100) : 0;
   const gaugeAngle = bookingRate * 1.8;
 
   // 입금현황
@@ -39,6 +42,10 @@ export default function OverviewTab({ bookings, blocked, totBooked, totRev, isBl
         <div className={s.statCard}><div style={{ fontSize: 28 }}>🚫</div><div className={s.statVal}>{blocked.length}개</div><div className={s.statLbl}>차단 타임</div></div>
       </div>
 
+      {preBooked > 0 && (
+        <div className={s.preNote}>📝 구글폼 선예약 {preBooked}명은 위 통계와 예약 목록에 없고, 예약율과 잔여 인원에만 반영돼요</div>
+      )}
+
       {/* 1. 예약율 게이지 */}
       <div className={s.gaugeSection}>
         <div className={s.sectionTitle}>예약율</div>
@@ -51,7 +58,7 @@ export default function OverviewTab({ bookings, blocked, totBooked, totRev, isBl
           >
             <div className={s.gaugeInner}>
               <div className={s.gaugeVal}>{bookingRate}%</div>
-              <div className={s.gaugeSub}>{totBooked} / {totalCapacity}명</div>
+              <div className={s.gaugeSub}>{filled} / {totalCapacity}명</div>
             </div>
           </div>
         </div>
@@ -135,10 +142,11 @@ export default function OverviewTab({ bookings, blocked, totBooked, totRev, isBl
 
       {/* 기존 날짜별 카드 */}
       {DATES.map(d => {
-        const slots = genSlots(d.startHour, d.endHour);
-        const dp = bookings.filter(b => b.date === d.key).reduce((sum, b) => sum + (b.count || 1), 0);
+        const slots = genSlots(d.startHour, d.endHour, slotMinutes);
+        const pre = Object.values(project.preBooked?.[d.key] || {}).reduce((a, b) => a + b, 0);
+        const dp = pre + bookings.filter(b => b.date === d.key).reduce((sum, b) => sum + (b.count || 1), 0);
         const db = slots.filter(sl => isBlk(d.key, sl)).length;
-        const tc = slots.length * 6;
+        const tc = slots.length * MAX_PERSONS;
         return (
           <div key={d.key} className={s.dayCard}>
             <div className={s.dayHeader}>
@@ -152,7 +160,9 @@ export default function OverviewTab({ bookings, blocked, totBooked, totRev, isBl
       })}
 
       <button className={s.refreshBtn} onClick={loadData}>🔄 새로고침</button>
-      <button className={s.resetBtn} onClick={admReset}>⚠️ 전체 초기화</button>
+      {project.status === 'open' && (
+        <button className={s.resetBtn} onClick={() => admReset(project)}>⚠️ 전체 초기화</button>
+      )}
     </>
   );
 }

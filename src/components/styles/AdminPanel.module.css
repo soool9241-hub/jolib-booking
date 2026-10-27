@@ -513,3 +513,41 @@
   cursor: pointer;
   font-family: var(--font-noto-sans-kr), sans-serif;
 }
+
+/* Project selector */
+.projBar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: #FFF5F0;
+  border-bottom: 1px solid #FFE0D0;
+}
+
+.projLabel {
+  font-size: 13px;
+  font-weight: 700;
+  color: #FF6B35;
+  flex-shrink: 0;
+}
+
+.projSelect {
+  flex: 1;
+  padding: 10px 12px;
+  border: 2px solid #FFD0B8;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+}
+
+.preNote {
+  background: #FFF8E1;
+  color: #8D6E00;
+  font-size: 13px;
+  line-height: 1.5;
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin: 12px 0;
+}

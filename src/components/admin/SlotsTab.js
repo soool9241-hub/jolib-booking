@@ -1,8 +1,8 @@
-import { DATES, MAX_PERSONS } from '@/lib/constants';
 import { genSlots } from '@/utils/helpers';
 import s from '../styles/AdminPanel.module.css';
 
-export default function SlotsTab({ admDate, setAdmDate, isBlk, getBooked, toggleBlk }) {
+export default function SlotsTab({ project, admDate, setAdmDate, isBlk, getBooked, toggleBlk }) {
+  const { dates: DATES, maxPersons: MAX_PERSONS, slotMinutes } = project;
   return (
     <>
       <div className={s.dateBtns}>
@@ -22,7 +22,7 @@ export default function SlotsTab({ admDate, setAdmDate, isBlk, getBooked, toggle
       </div>
 
       <div className={s.slotList}>
-        {genSlots(admDate.startHour, admDate.endHour).map(sl => {
+        {genSlots(admDate.startHour, admDate.endHour, slotMinutes).map(sl => {
           const blk = isBlk(admDate.key, sl);
           const bk = getBooked(admDate.key, sl);
           const rm = blk ? 0 : MAX_PERSONS - bk;
