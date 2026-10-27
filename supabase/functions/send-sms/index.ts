@@ -57,7 +57,7 @@ serve(async (req) => {
       `👤 ${booking.name}님 (${booking.count}명)\n` +
       `💵 ${payLabel} ${priceStr}` +
       bankInfo +
-      `\n\n완주 정월대보름 축제에서 만나요! 🧩`;
+      `\n\n조립공간에서 만나요! 🧩`;
 
     // Solapi HMAC-SHA256 인증
     const date = new Date().toISOString();

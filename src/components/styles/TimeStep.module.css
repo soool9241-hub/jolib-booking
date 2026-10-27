@@ -53,3 +53,19 @@
   padding: 2px 6px;
   border-radius: 8px;
 }
+
+.closedNotice {
+  background: #f5f5f5;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+/* 마감 화면에서는 숫자가 읽히도록 흐리게 처리하지 않는다 */
+.timeSlot.closedSlot:disabled {
+  opacity: 1;
+  background: #fafafa;
+}

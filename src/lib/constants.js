@@ -1,10 +1,10 @@
-export const DATES = [
-  { key: '2/28 (토)', label: '2/28 (토)', day: 1, startHour: 11, endHour: 20 },
-  { key: '3/1 (일)', label: '3/1 (일)', day: 2, startHour: 10, endHour: 17 },
-];
+import { CURRENT } from '@/projects';
 
-export const MAX_PERSONS = 6;
-export const PT = 5000; // transfer price
-export const PC = 6000; // card price
-export const BANK = '카카오뱅크 3333-06-4749542 임솔';
+export const DATES = CURRENT.dates;
+export const MAX_PERSONS = CURRENT.maxPersons;
+export const PT = CURRENT.priceTransfer; // transfer price
+export const PC = CURRENT.priceCard; // card price
+export const BANK = CURRENT.bank;
+export const BOOKING_OPEN = CURRENT.status === 'open';
+export const SNAPSHOT = CURRENT.snapshot || {};
 export const ADMIN_PW = '9241';

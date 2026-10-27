@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, EDGE_FUNCTION_URL, SUPABASE_ANON_KEY } from '@/lib/supabase';
-import { DATES, MAX_PERSONS, PT, PC, ADMIN_PW } from '@/lib/constants';
+import { MAX_PERSONS, PT, PC, ADMIN_PW, BOOKING_OPEN, SNAPSHOT } from '@/lib/constants';
 import { childrenToColumns, columnsToChildren } from '@/utils/helpers';
 
 import IntroStep from './steps/IntroStep';
@@ -44,7 +44,8 @@ export default function BookingApp() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { loadData(); }, [loadData]);
+  // 마감된 프로젝트는 snapshot으로 보여주므로 첫 화면에서 DB를 읽지 않는다 (관리자 로그인 시에는 읽음)
+  useEffect(() => { if (BOOKING_OPEN) loadData(); else setLoading(false); }, [loadData]);
 
   // Provide exit callback for AdminPanel
   useEffect(() => {
@@ -53,12 +54,14 @@ export default function BookingApp() {
   }, []);
 
   const getBooked = (d, t) => bookings.filter(b => b.date === d && b.time === t).reduce((s, b) => s + (b.count || 1), 0);
+  // 고객 화면용: 마감된 프로젝트는 당시 최종 예약 인원(snapshot)을 쓴다
+  const getShown = (d, t) => BOOKING_OPEN ? getBooked(d, t) : (SNAPSHOT[d]?.[t] || 0);
   const isBlk = (d, t) => blocked.some(b => b.date === d && b.time === t);
-  const getRem = (d, t) => isBlk(d, t) ? 0 : MAX_PERSONS - getBooked(d, t);
+  const getRem = (d, t) => !BOOKING_OPEN ? 0 : isBlk(d, t) ? 0 : MAX_PERSONS - getBooked(d, t);
 
   // Booking submission
   const handleReserve = async () => {
-    if (!form.name || !form.phone) return;
+    if (!BOOKING_OPEN || !form.name || !form.phone) return;
     const rem = getRem(selDate.key, selTime);
     if (form.count > rem) { alert('잔여 인원이 ' + rem + '명입니다.'); return; }
     setSubmitting(true);
@@ -186,7 +189,7 @@ export default function BookingApp() {
 
       {step === 1 && (
         <DateStep
-          getRem={getRem}
+          getShown={getShown}
           onSelect={(d) => { setSelDate(d); setStep(2); }}
         />
       )}
@@ -196,6 +199,7 @@ export default function BookingApp() {
           selDate={selDate}
           isBlk={isBlk}
           getRem={getRem}
+          getShown={getShown}
           onSelect={(sl) => {
             setSelTime(sl);
             setForm({ ...form, count: 1, children: [{ name: '', gender: '', age: '' }] });
