@@ -52,6 +52,55 @@ export default function IntroStep({ onStart, onAdminClick }) {
         </div>
       )}
 
+      {INTRO.assembly && (() => {
+        const A = INTRO.assembly;
+        return (
+          <div style={{ padding: '28px 0 0' }}>
+            <h3 className={s.secTitle}>{A.title}</h3>
+            <div className={s.howList} style={{ padding: '0 20px' }}>
+              {A.steps.map((st, i) => (
+                <div key={i} className={s.howCard}>
+                  <div className={s.howBadge} style={{ background: BADGE_COLORS[i % BADGE_COLORS.length] }}>{st.label}</div>
+                  <div style={{ fontSize: 36, marginBottom: 8, marginTop: 4 }}>{st.icon}</div>
+                  <div className={s.howTitle}>{st.title}</div>
+                  <div className={s.howDesc}>{st.desc}</div>
+                </div>
+              ))}
+            </div>
+
+            {A.examples?.length > 0 && (
+              <div className={s.exampleBox}>
+                <div className={s.exampleTitle}>{A.examplesTitle}</div>
+                <div className={s.exampleGrid}>
+                  {A.examples.map(ex => (
+                    <div key={ex.src}>
+                      <div className={s.exampleImg}>
+                        <Image src={ex.src} alt={`${A.examplesTitle} ${ex.label}`} fill sizes="220px"
+                          style={{ objectFit: 'cover', objectPosition: ex.position || 'center' }} />
+                      </div>
+                      <div className={s.exampleLabel}>{ex.label}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {A.photos?.length > 0 && (
+              <>
+                <div className={s.exampleTitle} style={{ marginTop: 20 }}>{A.photosTitle}</div>
+                <div className={s.photoRow}>
+                  {A.photos.map(src => (
+                    <div key={src} className={s.photoBox}>
+                      <Image src={src} alt={A.photosTitle} fill sizes="200px" style={{ objectFit: 'cover' }} />
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        );
+      })()}
+
       {INTRO.steps?.length > 0 && <div style={{ padding: '28px 20px 0' }}>
         <h3 className={s.secTitle}>체험 방법 안내</h3>
         <div className={s.howList}>
@@ -102,18 +151,6 @@ export default function IntroStep({ onStart, onAdminClick }) {
         </div>
       )}
 
-      {INTRO.photos?.length > 0 && (
-        <div style={{ padding: '28px 0 0' }}>
-          <h3 className={s.secTitle}>{INTRO.photosTitle}</h3>
-          <div className={s.photoRow}>
-            {INTRO.photos.map(src => (
-              <div key={src} className={s.photoBox}>
-                <Image src={src} alt={INTRO.photosTitle} fill sizes="200px" style={{ objectFit: 'cover' }} />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
 
       {INTRO.notice && (
         <div className={s.noticeBox}>

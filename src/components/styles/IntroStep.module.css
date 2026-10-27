@@ -383,3 +383,40 @@
   letter-spacing: -0.5px;
   word-break: keep-all;
 }
+
+/* 조립체험: 예시사진 */
+.exampleBox {
+  margin: 16px 20px 0;
+  padding: 16px;
+  background: #FFF8EC;
+  border-radius: 18px;
+}
+
+.exampleTitle {
+  font-size: 17px;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.exampleGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.exampleImg {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #eee;
+}
+
+.exampleLabel {
+  margin-top: 6px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #555;
+}

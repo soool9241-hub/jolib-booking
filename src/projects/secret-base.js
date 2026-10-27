@@ -47,16 +47,28 @@ export const secretBase = {
       '자기 몸만 한 큰 조각을 나르며 에너지 방출이 필요한 아이',
       '아이에게 새로운 놀이 경험을 해주고 싶은 부모님',
     ],
-    photosTitle: '지난 체험 현장',
-    photos: [
-      '/projects/secret-base/photo-1.jpg',
-      '/projects/secret-base/photo-2.jpg',
-      '/projects/secret-base/photo-3.jpg',
-      '/projects/secret-base/photo-4.jpg',
-      '/projects/secret-base/photo-5.jpg',
-      '/projects/secret-base/photo-6.jpg',
-    ],
-    notice: '정식 출시 전 진행하는 시제품 체험 테스트예요\n체험 후 간단한 설문에 함께해 주세요!',
+    // 조립체험: 진행 순서 + 비밀기지 예시사진 + 현장 사진
+    assembly: {
+      title: '조립체험',
+      steps: [
+        { label: '첫 번째', icon: '🧩', title: '미니어처 키트로 조립 방법 배우기', desc: '아이들과 함께 미니어처 조립키트를 조립하며\n끼우고 연결하는 방법을 알아봐요' },
+        { label: '두 번째', icon: '🏠', title: '실제 조각으로 나만의 조립공간 짓기', desc: '어떻게 지을지 직접 생각해 보면서\n커다란 실제 조각으로 조립공간을 만들어봐요' },
+      ],
+      examplesTitle: '비밀기지 예시사진',
+      examples: [
+        { src: '/projects/secret-base/example-1-crop.jpg', label: '예시 1' },
+        { src: '/projects/secret-base/example-2.jpg', label: '예시 2' },
+      ],
+      photosTitle: '조립체험 현장',
+      photos: [
+        '/projects/secret-base/photo-1.jpg',
+        '/projects/secret-base/photo-2.jpg',
+        '/projects/secret-base/photo-3.jpg',
+        '/projects/secret-base/photo-4.jpg',
+        '/projects/secret-base/photo-5.jpg',
+        '/projects/secret-base/photo-6.jpg',
+      ],
+    },
   },
   // 상세페이지 맨 아래와 예약 완료 화면에 보여줄 당근 링크
   invite: {
