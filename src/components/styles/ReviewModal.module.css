@@ -11,7 +11,7 @@
 .box {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 440px;
   max-height: 92vh;
   overflow-y: auto;
   background: #fff;
@@ -56,6 +56,7 @@
   justify-content: center;
   width: 100%;
   aspect-ratio: 4 / 3;
+  min-height: 220px; /* aspect-ratio 미지원 브라우저 대비 */
   border: 2px dashed #FFB08A;
   border-radius: 16px;
   background: #FFF6F1;

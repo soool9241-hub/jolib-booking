@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { BOOKING_OPEN, INTRO, INVITE, PT } from '@/lib/constants';
 import { fmt } from '@/utils/helpers';
 import ReviewModal from '../ui/ReviewModal';
+import Slider from '../ui/Slider';
 import s from '../styles/IntroStep.module.css';
 
 const BADGE_COLORS = ['#FFB347', '#FF6B35', '#4caf50', '#9C6ADE', '#E91E63'];
@@ -78,15 +79,7 @@ export default function IntroStep({ onStart, onAdminClick }) {
                 {A.exampleGroups.map(g => (
                   <div key={g.name} className={s.exampleGroup}>
                     <div className={s.exampleLabel}>{g.name}</div>
-                    <div className={s.slider}>
-                      {g.images.map((src, i) => (
-                        <div key={src} className={s.slide}>
-                          <Image src={src} alt={`${g.name} 예시 ${i + 1}`} fill sizes="(max-width: 480px) 80vw, 360px"
-                            style={{ objectFit: 'cover' }} />
-                          {g.images.length > 1 && <span className={s.slideNum}>{i + 1} / {g.images.length}</span>}
-                        </div>
-                      ))}
-                    </div>
+                    <Slider images={g.images} alt={`${g.name} 예시`} />
                   </div>
                 ))}
               </div>

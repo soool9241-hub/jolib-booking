@@ -35,7 +35,7 @@ export const secretBase = {
     ],
     info: [
       { icon: '🧒', label: '대상', value: '초등학생 1~6학년' },
-      { icon: '📍', label: '장소', value: '전주 남부시장 청년몰\n2층 노란건물 계단 옆' },
+      { icon: '📍', label: '장소', value: '전주 남부시장 청년몰\n2층 계단 옆 노란건물' },
       { icon: '⏱️', label: '운영', value: '회차별 약 50분' },
       { icon: '🍪', label: '참가비', value: '5,000원 (간식 제공)' },
     ],
