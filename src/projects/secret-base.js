@@ -31,18 +31,12 @@ export const secretBase = {
     // 당근 모집 게시글 이미지 순서
     cards: [
       { src: '/projects/secret-base/card-1-pieces.jpg', alt: '커다란 조각으로 나만의 아지트를 만들어요' },
-      { src: '/projects/secret-base/card-2-gesture.jpg', alt: '이번엔 손짓으로 블록을 만들어볼까요?' },
+      { src: '/projects/secret-base/card-2-gesture.jpg', alt: '이번엔 손짓으로 블록을 만들어볼까요?', badge: '🎁 보너스 트랙', badgeDesc: '손짓으로 가상 블록을 만드는 디지털 체험도 함께해요!' },
       { src: '/projects/secret-base/card-3-info.jpg', alt: '대상 초등학생 1~6학년, 장소 전주 남부시장 청년몰, 회차별 약 50분, 참가비 5,000원 간식 제공' },
-    ],
-    steps: [
-      { icon: '📋', title: '체험 안내', desc: '오늘의 미션과 조립 방법을\n안내받아요' },
-      { icon: '🧱', title: '커다란 조각으로 아지트 만들기', desc: '네모, 세모, 동그라미 조각을\n자유롭게 끼우고 연결해요' },
-      { icon: '✋', title: '손짓으로 블록 만들기', desc: '손을 오므렸다 쭉 펴면 가상 블록이 생겨요\n움직이고 쌓아보는 디지털 체험' },
-      { icon: '🍪', title: '간식 & 간단한 설문', desc: '간식을 먹으며\n체험 소감을 들려주세요' },
     ],
     info: [
       { icon: '🧒', label: '대상', value: '초등학생 1~6학년' },
-      { icon: '📍', label: '장소', value: '전주 남부시장 청년몰' },
+      { icon: '📍', label: '장소', value: '전주 남부시장 청년몰\n2층 노란건물 계단 옆' },
       { icon: '⏱️', label: '운영', value: '회차별 약 50분' },
       { icon: '🍪', label: '참가비', value: '5,000원 (간식 제공)' },
     ],
@@ -63,6 +57,11 @@ export const secretBase = {
       '/projects/secret-base/photo-6.jpg',
     ],
     notice: '정식 출시 전 진행하는 시제품 체험 테스트예요\n체험 후 간단한 설문에 함께해 주세요!',
+  },
+  // 상세페이지 맨 아래와 예약 완료 화면에 보여줄 당근 링크
+  invite: {
+    label: '🎁 대형 조립공간 체험 VIP 초대권 받기!!',
+    url: 'https://www.daangn.com/kr/local-profile/45kj9mgihaxr/',
   },
   ogImage: '/projects/secret-base/poster.jpg',
   ogDescription: '상상 속 나만의 아지트를 만들어볼까요? 전주 남부시장 청년몰 · 10.28(수) 31(토) 11.1(일) 오후 3시~7시',

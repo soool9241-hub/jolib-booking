@@ -32,6 +32,11 @@ export const moonRabbit = {
     notice: '저녁 시간대는 예약이 몰릴 수 있으니 미리 신청해서 예약해주세요!',
   },
 
+  invite: {
+    label: '🎁 조립공간 원데이 워크샵 초대받기',
+    url: 'https://daangn.com/kr/share/community/ref/invite-group/8iXEGrbakS',
+  },
+
   // 최종 실적 (2026-03-05 관리자 엑셀 기준)
   results: { bookings: 51, persons: 86, revenue: 436000, transfer: 47, card: 4 },
 

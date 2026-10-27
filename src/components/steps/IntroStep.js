@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { BOOKING_OPEN, INTRO, PT } from '@/lib/constants';
+import { BOOKING_OPEN, INTRO, INVITE, PT } from '@/lib/constants';
 import { fmt } from '@/utils/helpers';
 import s from '../styles/IntroStep.module.css';
 
@@ -37,14 +37,22 @@ export default function IntroStep({ onStart, onAdminClick }) {
           <h3 className={s.secTitle}>체험 소개</h3>
           <div className={s.cardList}>
             {INTRO.cards.map(c => (
-              <Image key={c.src} src={c.src} alt={c.alt} width={1440} height={1440}
-                sizes="(max-width: 480px) 100vw, 440px" className={s.cardImg} />
+              <div key={c.src} className={c.badge ? s.bonusWrap : undefined}>
+                {c.badge && (
+                  <div className={s.bonusHead}>
+                    <span className={s.bonusBadge}>{c.badge}</span>
+                    {c.badgeDesc && <span className={s.bonusDesc}>{c.badgeDesc}</span>}
+                  </div>
+                )}
+                <Image src={c.src} alt={c.alt} width={1440} height={1440}
+                  sizes="(max-width: 480px) 100vw, 440px" className={s.cardImg} />
+              </div>
             ))}
           </div>
         </div>
       )}
 
-      <div style={{ padding: '28px 20px 0' }}>
+      {INTRO.steps?.length > 0 && <div style={{ padding: '28px 20px 0' }}>
         <h3 className={s.secTitle}>체험 방법 안내</h3>
         <div className={s.howList}>
           {INTRO.steps.map((st, i) => (
@@ -56,7 +64,7 @@ export default function IntroStep({ onStart, onAdminClick }) {
             </div>
           ))}
         </div>
-      </div>
+      </div>}
 
       {INTRO.info.length > 3 && (
         <div className={s.infoGrid}>
@@ -118,6 +126,12 @@ export default function IntroStep({ onStart, onAdminClick }) {
         <button className={s.ctaBtn} onClick={onStart}>체험 예약하기 →</button>
         {BOOKING_OPEN && <div className={s.ctaSub}>체험비 1인 {fmt(PT)}부터</div>}
       </div>
+
+      {INVITE && (
+        <div style={{ padding: '20px 20px 0' }}>
+          <a href={INVITE.url} target="_blank" rel="noopener noreferrer" className={s.inviteBtn}>{INVITE.label}</a>
+        </div>
+      )}
 
       <button className={s.adminLink} onClick={onAdminClick}>관리자 모드</button>
     </div>

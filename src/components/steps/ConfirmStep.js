@@ -1,4 +1,4 @@
-import { PT, PC, BANK } from '@/lib/constants';
+import { PT, PC, BANK, INVITE } from '@/lib/constants';
 import { fmt } from '@/utils/helpers';
 import s from '../styles/ConfirmStep.module.css';
 
@@ -73,14 +73,11 @@ export default function ConfirmStep({ selDate, selTime, form, smsSent }) {
         )}
       </div>
 
-      <a
-        href="https://daangn.com/kr/share/community/ref/invite-group/8iXEGrbakS"
-        target="_blank"
-        rel="noopener noreferrer"
-        className={s.inviteBtn}
-      >
-        🎁 조립공간 원데이 워크샵 초대받기
-      </a>
+      {INVITE && (
+        <a href={INVITE.url} target="_blank" rel="noopener noreferrer" className={s.inviteBtn}>
+          {INVITE.label}
+        </a>
+      )}
     </div>
   );
 }

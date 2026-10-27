@@ -330,3 +330,56 @@
   scroll-snap-align: start;
   background: #eee;
 }
+
+/* 보너스 트랙 카드 */
+.bonusWrap {
+  background: linear-gradient(135deg, #F3E8FF, #E8F0FF);
+  border: 2px dashed #B48CF0;
+  border-radius: 22px;
+  padding: 12px;
+}
+
+.bonusHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin: 4px 0 12px;
+  text-align: center;
+}
+
+.bonusBadge {
+  background: #9C6ADE;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+.bonusDesc {
+  font-size: 14px;
+  color: #6B4BA8;
+  font-weight: 600;
+  word-break: keep-all;
+}
+
+.infoGrid .infoValue {
+  white-space: pre-line;
+}
+
+.inviteBtn {
+  display: block;
+  width: 100%;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #FF6F0F, #FF9A3E);
+  color: #fff;
+  border-radius: 16px;
+  font-size: 18px;
+  font-weight: 800;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 6px 24px rgba(255, 111, 15, 0.3);
+  letter-spacing: -0.5px;
+  word-break: keep-all;
+}
