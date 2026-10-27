@@ -26,7 +26,7 @@ function downloadExcel(bookings, project) {
   ];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '예약목록');
-  XLSX.writeFile(wb, `예약자리스트_${project.name}_${new Date().toISOString().slice(0, 10)}.xlsx`);
+  XLSX.writeFile(wb, `예약자리스트_${project.name}_${new Date().toLocaleDateString('sv-SE')}.xlsx`);
 }
 
 export default function BookingsTab({ project, bookings, bkTab, setBkTab, toggleStatus, startEdit, admCancel, loadData }) {
