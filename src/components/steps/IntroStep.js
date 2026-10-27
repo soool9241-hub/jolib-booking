@@ -79,6 +79,7 @@ export default function IntroStep({ onStart, onAdminClick }) {
                 {A.exampleGroups.map(g => (
                   <div key={g.name} className={s.exampleGroup}>
                     <div className={s.exampleLabel}>{g.name}</div>
+                    {g.desc && <div className={s.exampleDesc}>{g.desc}</div>}
                     <Slider images={g.images} alt={`${g.name} 예시`} />
                   </div>
                 ))}

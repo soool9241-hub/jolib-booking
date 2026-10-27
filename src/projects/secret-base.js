@@ -62,7 +62,7 @@ export const secretBase = {
         { name: '종이 버전 조립공간', images: ['/projects/secret-base/example-1-crop.jpg', '/projects/secret-base/example-2.jpg'] },
         { name: '목재 버전 조립공간', images: ['/projects/secret-base/wood-1.jpg', '/projects/secret-base/wood-2.jpg'] },
         // TODO: 디지털 버전 사진 1장 더 받기
-        { name: '디지털 버전 조립공간', images: ['/projects/secret-base/card-2-gesture.jpg'] },
+        { name: '디지털 버전 조립공간', desc: '가상의 공간에 나만의 공간을 만들고\n오래 기억할 수 있는 프로젝트입니다!!', images: ['/projects/secret-base/card-2-gesture.jpg'] },
       ],
     },
   },
