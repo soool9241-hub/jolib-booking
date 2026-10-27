@@ -15,24 +15,35 @@ export default function ReviewsTab({ project }) {
 
   if (!rows) return <div className={s.empty}>불러오는 중...</div>;
 
-  const kids = rows.reduce((sum, r) => sum + (r.kids_count || 0), 0);
+  // 아이 1명 = 1행. 한 번에 올린 아이들은 같은 사진(photo_path)으로 묶는다
+  const groups = [];
+  const byPhoto = {};
+  rows.forEach(r => {
+    const key = r.photo_path || 'row-' + r.id;
+    if (!byPhoto[key]) { byPhoto[key] = { key, photo: r.photo_path, at: r.created_at, kids: [] }; groups.push(byPhoto[key]); }
+    byPhoto[key].kids.push(r);
+  });
 
   return (
     <>
-      <div className={s.preNote}>📸 인증샷 {rows.length}건 · 아이 {kids}명</div>
-      {rows.length === 0 && <div className={s.empty}>아직 올라온 인증샷이 없습니다</div>}
-      {rows.map(r => {
-        const url = r.photo_path ? supabase.storage.from('reviews').getPublicUrl(r.photo_path).data.publicUrl : null;
+      <div className={s.preNote}>📸 인증샷 {groups.length}건 · 아이 {rows.length}명</div>
+      {groups.length === 0 && <div className={s.empty}>아직 올라온 인증샷이 없습니다</div>}
+      {groups.map(g => {
+        const url = g.photo ? supabase.storage.from('reviews').getPublicUrl(g.photo).data.publicUrl : null;
         return (
-          <div key={r.id} className={s.bCard}>
+          <div key={g.key} className={s.bCard}>
             {url && (
               <a href={url} target="_blank" rel="noopener noreferrer">
-                <img src={url} alt={r.child_name} style={{ width: '100%', borderRadius: 10, marginBottom: 10 }} />
+                <img src={url} alt="인증샷" style={{ width: '100%', borderRadius: 10, marginBottom: 10 }} />
               </a>
             )}
-            <div style={{ fontWeight: 800, fontSize: 16 }}>{r.child_name} <span style={{ color: '#999', fontWeight: 500 }}>({r.kids_count}명)</span></div>
-            <div style={{ fontSize: 14, color: '#444', margin: '6px 0', whiteSpace: 'pre-line' }}>{r.comment}</div>
-            <div style={{ fontSize: 12, color: '#aaa' }}>{new Date(r.created_at).toLocaleString('ko-KR')}</div>
+            {g.kids.map(k => (
+              <div key={k.id} style={{ marginBottom: 8 }}>
+                <div style={{ fontWeight: 800, fontSize: 15 }}>{k.child_name}</div>
+                <div style={{ fontSize: 14, color: '#444', whiteSpace: 'pre-line' }}>{k.comment}</div>
+              </div>
+            ))}
+            <div style={{ fontSize: 12, color: '#aaa' }}>아이 {g.kids.length}명 · {new Date(g.at).toLocaleString('ko-KR')}</div>
           </div>
         );
       })}

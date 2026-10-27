@@ -34,6 +34,7 @@
 }
 
 .title {
+  white-space: pre-line;
   font-size: 22px;
   font-weight: 800;
   text-align: center;
@@ -159,4 +160,43 @@
 .doneWrap {
   text-align: center;
   padding: 12px 0 4px;
+}
+
+.kidsPick {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+
+.kidsBtn {
+  padding: 10px 0;
+  border: 2px solid #eee;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  color: #666;
+  cursor: pointer;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+}
+
+.kidsBtnOn {
+  border-color: #FF6B35;
+  background: #FFF6F1;
+  color: #FF6B35;
+}
+
+.childCard {
+  border: 1px solid #f0e6df;
+  background: #FFFCFA;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.childNum {
+  font-size: 13px;
+  font-weight: 800;
+  color: #FF6B35;
+  margin-bottom: 8px;
 }

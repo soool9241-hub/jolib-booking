@@ -68,7 +68,7 @@ export const secretBase = {
   },
   // 상세페이지 맨 아래 버튼: 인증샷·소감 폼(reviews) 작성 후 당근 프로필로 이동해 쿠폰 받기
   invite: {
-    label: '🎁 대형 조립공간 체험 VIP 초대권 받기!!',
+    label: '🎁 대형 조립공간 DAY VIP 초대권 이벤트',
     url: 'https://www.daangn.com/kr/local-profile/45kj9mgihaxr/',
     review: true,
   },
