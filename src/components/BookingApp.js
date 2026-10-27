@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, EDGE_FUNCTION_URL, SUPABASE_ANON_KEY } from '@/lib/supabase';
-import { MAX_PERSONS, PT, PC, ADMIN_PW, BOOKING_OPEN, SNAPSHOT } from '@/lib/constants';
+import { MAX_PERSONS, PT, PC, ADMIN_PW, BOOKING_OPEN, SNAPSHOT, PRE_BOOKED } from '@/lib/constants';
 import { childrenToColumns, columnsToChildren } from '@/utils/helpers';
 
 import IntroStep from './steps/IntroStep';
@@ -53,7 +53,7 @@ export default function BookingApp() {
     return () => { delete window.__exitAdmin; };
   }, []);
 
-  const getBooked = (d, t) => bookings.filter(b => b.date === d && b.time === t).reduce((s, b) => s + (b.count || 1), 0);
+  const getBooked = (d, t) => (PRE_BOOKED[d]?.[t] || 0) + bookings.filter(b => b.date === d && b.time === t).reduce((s, b) => s + (b.count || 1), 0);
   // 고객 화면용: 마감된 프로젝트는 당시 최종 예약 인원(snapshot)을 쓴다
   const getShown = (d, t) => BOOKING_OPEN ? getBooked(d, t) : (SNAPSHOT[d]?.[t] || 0);
   const isBlk = (d, t) => blocked.some(b => b.date === d && b.time === t);

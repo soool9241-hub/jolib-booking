@@ -21,7 +21,7 @@ export default function DateStep({ getShown, onSelect }) {
             <button key={d.key} className={s.dateCard} onClick={() => onSelect(d)}>
               <div className={s.dayLabel}>Day {d.day}</div>
               <div className={s.dateLabel}>{d.label}</div>
-              <div className={s.timeRange}>{d.startHour}:00 ~ {d.endHour}:00</div>
+              <div className={s.timeRange}>{slots[0]} ~ {slots.at(-1)} · {slots.length}타임</div>
               <div className={s.barBg}><div className={s.barFill} style={{ width: pct + '%' }} /></div>
               {BOOKING_OPEN
                 ? <div className={s.remaining}>잔여 {ts - booked}/{ts}명</div>

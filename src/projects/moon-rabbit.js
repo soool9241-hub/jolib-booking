@@ -12,6 +12,7 @@ export const moonRabbit = {
     { key: '2/28 (토)', label: '2/28 (토)', day: 1, startHour: 11, endHour: 20 },
     { key: '3/1 (일)', label: '3/1 (일)', day: 2, startHour: 10, endHour: 17 },
   ],
+  slotMinutes: 20,
   maxPersons: 6,
   priceTransfer: 5000,
   priceCard: 6000,

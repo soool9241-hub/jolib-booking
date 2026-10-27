@@ -1,9 +1,10 @@
-export function genSlots(sh, eh) {
+import { SLOT_MINUTES } from '@/lib/constants';
+
+// 시작시~종료시 전까지 step분 간격 슬롯 (예: 15, 20, 60 → 15:00 ~ 19:00)
+export function genSlots(sh, eh, step = SLOT_MINUTES) {
   const s = [];
-  for (let h = sh; h < eh; h++) {
-    s.push(String(h).padStart(2, '0') + ':00');
-    s.push(String(h).padStart(2, '0') + ':20');
-    s.push(String(h).padStart(2, '0') + ':40');
+  for (let m = sh * 60; m < eh * 60; m += step) {
+    s.push(String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0'));
   }
   return s;
 }
