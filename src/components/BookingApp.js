@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { supabase, EDGE_FUNCTION_URL, SUPABASE_ANON_KEY } from '@/lib/supabase';
-import { MAX_PERSONS, PT, PC, ADMIN_PW, BOOKING_OPEN, SNAPSHOT, PRE_BOOKED } from '@/lib/constants';
+import { DATES, MAX_PERSONS, PT, PC, ADMIN_PW, BOOKING_OPEN, SNAPSHOT, PRE_BOOKED } from '@/lib/constants';
 import { childrenToColumns, columnsToChildren } from '@/utils/helpers';
 
 import IntroStep from './steps/IntroStep';
@@ -39,8 +39,10 @@ export default function BookingApp() {
       supabase.from('bookings').select('*').order('created_at', { ascending: false }),
       supabase.from('blocked_slots').select('*'),
     ]);
-    if (bRes.data) setBookings(bRes.data);
-    if (blRes.data) setBlocked(blRes.data);
+    // 같은 DB에 지난 프로젝트 예약도 있으므로 현재 프로젝트 날짜만 쓴다
+    const keys = new Set(DATES.map(d => d.key));
+    if (bRes.data) setBookings(bRes.data.filter(b => keys.has(b.date)));
+    if (blRes.data) setBlocked(blRes.data.filter(b => keys.has(b.date)));
     setLoading(false);
   }, []);
 
@@ -123,9 +125,11 @@ export default function BookingApp() {
     await loadData();
   };
   const admReset = async () => {
-    if (!confirm('⚠️ 모든 예약+차단 초기화?')) return;
-    await supabase.from('bookings').delete().neq('id', 0);
-    await supabase.from('blocked_slots').delete().neq('id', 0);
+    if (!confirm('⚠️ 현재 프로젝트의 모든 예약+차단 초기화?')) return;
+    // 지난 프로젝트 기록은 남기고 현재 프로젝트 날짜만 지운다
+    const keys = DATES.map(d => d.key);
+    await supabase.from('bookings').delete().in('date', keys);
+    await supabase.from('blocked_slots').delete().in('date', keys);
     await loadData();
   };
 
