@@ -420,3 +420,61 @@
   font-weight: 700;
   color: #555;
 }
+
+/* 체험 순서: 마지막 단계 강조 */
+.howCardHot {
+  border: 2px solid #FF6B35;
+  background: #FFF6F1;
+}
+
+/* 버전별 예시 슬라이드 */
+.exampleGroup {
+  margin-top: 14px;
+}
+
+.exampleGroup .exampleLabel {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #333;
+}
+
+.slider {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+}
+
+.slide {
+  position: relative;
+  flex: 0 0 82%;
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #eee;
+  scroll-snap-align: center;
+}
+
+.slide:only-child {
+  flex-basis: 100%;
+}
+
+.slideNum {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 10px;
+}
+
+button.inviteBtn {
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-noto-sans-kr), sans-serif;
+}

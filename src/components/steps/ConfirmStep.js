@@ -73,7 +73,7 @@ export default function ConfirmStep({ selDate, selTime, form, smsSent }) {
         )}
       </div>
 
-      {INVITE && (
+      {INVITE && !INVITE.review && (
         <a href={INVITE.url} target="_blank" rel="noopener noreferrer" className={s.inviteBtn}>
           {INVITE.label}
         </a>

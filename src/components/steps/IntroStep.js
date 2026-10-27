@@ -1,13 +1,17 @@
+import { useState } from 'react';
 import Image from 'next/image';
 import { BOOKING_OPEN, INTRO, INVITE, PT } from '@/lib/constants';
 import { fmt } from '@/utils/helpers';
+import ReviewModal from '../ui/ReviewModal';
 import s from '../styles/IntroStep.module.css';
 
-const BADGE_COLORS = ['#FFB347', '#FF6B35', '#4caf50', '#9C6ADE'];
+const BADGE_COLORS = ['#FFB347', '#FF6B35', '#4caf50', '#9C6ADE', '#E91E63'];
 
 export default function IntroStep({ onStart, onAdminClick }) {
+  const [showReview, setShowReview] = useState(false);
   return (
     <div>
+      {showReview && <ReviewModal invite={INVITE} onClose={() => setShowReview(false)} />}
       <div className={s.hero}>
         <div className={s.heroBg1} />
         <div className={s.heroBg2} />
@@ -59,7 +63,7 @@ export default function IntroStep({ onStart, onAdminClick }) {
             <h3 className={s.secTitle}>{A.title}</h3>
             <div className={s.howList} style={{ padding: '0 20px' }}>
               {A.steps.map((st, i) => (
-                <div key={i} className={s.howCard}>
+                <div key={i} className={`${s.howCard} ${st.highlight ? s.howCardHot : ''}`}>
                   <div className={s.howBadge} style={{ background: BADGE_COLORS[i % BADGE_COLORS.length] }}>{st.label}</div>
                   <div style={{ fontSize: 36, marginBottom: 8, marginTop: 4 }}>{st.icon}</div>
                   <div className={s.howTitle}>{st.title}</div>
@@ -68,34 +72,24 @@ export default function IntroStep({ onStart, onAdminClick }) {
               ))}
             </div>
 
-            {A.examples?.length > 0 && (
+            {A.exampleGroups?.length > 0 && (
               <div className={s.exampleBox}>
                 <div className={s.exampleTitle}>{A.examplesTitle}</div>
-                <div className={s.exampleGrid}>
-                  {A.examples.map(ex => (
-                    <div key={ex.src}>
-                      <div className={s.exampleImg}>
-                        <Image src={ex.src} alt={`${A.examplesTitle} ${ex.label}`} fill sizes="220px"
-                          style={{ objectFit: 'cover', objectPosition: ex.position || 'center' }} />
-                      </div>
-                      <div className={s.exampleLabel}>{ex.label}</div>
+                {A.exampleGroups.map(g => (
+                  <div key={g.name} className={s.exampleGroup}>
+                    <div className={s.exampleLabel}>{g.name}</div>
+                    <div className={s.slider}>
+                      {g.images.map((src, i) => (
+                        <div key={src} className={s.slide}>
+                          <Image src={src} alt={`${g.name} 예시 ${i + 1}`} fill sizes="(max-width: 480px) 80vw, 360px"
+                            style={{ objectFit: 'cover' }} />
+                          {g.images.length > 1 && <span className={s.slideNum}>{i + 1} / {g.images.length}</span>}
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                ))}
               </div>
-            )}
-
-            {A.photos?.length > 0 && (
-              <>
-                <div className={s.exampleTitle} style={{ marginTop: 20 }}>{A.photosTitle}</div>
-                <div className={s.photoRow}>
-                  {A.photos.map(src => (
-                    <div key={src} className={s.photoBox}>
-                      <Image src={src} alt={A.photosTitle} fill sizes="200px" style={{ objectFit: 'cover' }} />
-                    </div>
-                  ))}
-                </div>
-              </>
             )}
           </div>
         );
@@ -166,7 +160,9 @@ export default function IntroStep({ onStart, onAdminClick }) {
 
       {INVITE && (
         <div style={{ padding: '20px 20px 0' }}>
-          <a href={INVITE.url} target="_blank" rel="noopener noreferrer" className={s.inviteBtn}>{INVITE.label}</a>
+          {INVITE.review
+            ? <button type="button" className={s.inviteBtn} onClick={() => setShowReview(true)}>{INVITE.label}</button>
+            : <a href={INVITE.url} target="_blank" rel="noopener noreferrer" className={s.inviteBtn}>{INVITE.label}</a>}
         </div>
       )}
 
