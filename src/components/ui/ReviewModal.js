@@ -62,6 +62,8 @@ export default function ReviewModal({ invite, onClose }) {
       })));
       if (error) throw error;
       setDone(true);
+      // 저장이 끝나면 바로 당근 프로필로 이동해서 쿠폰을 받게 한다
+      setTimeout(() => { window.location.href = invite.url; }, 1200);
     } catch (e) {
       alert('업로드에 실패했어요. 잠시 후 다시 시도해주세요.\n(' + (e.message || e) + ')');
     }
@@ -76,10 +78,10 @@ export default function ReviewModal({ invite, onClose }) {
         {done ? (
           <div className={s.doneWrap}>
             <div style={{ fontSize: 56 }}>🎉</div>
-            <h3 className={s.title}>인증샷 업로드 완료!</h3>
-            <p className={s.sub}>당근 프로필에서 체험 쿠폰을 받아주세요</p>
-            <a href={invite.url} target="_blank" rel="noopener noreferrer" className={s.submit}>
-              🥕 당근에서 쿠폰 받기
+            <h3 className={s.title}>업로드 완료!</h3>
+            <p className={s.sub}>당근으로 이동해요. 체험 쿠폰을 받아주세요!</p>
+            <a href={invite.url} className={s.submit}>
+              🥕 바로 이동하기
             </a>
           </div>
         ) : (
