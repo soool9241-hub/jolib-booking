@@ -1,4 +1,5 @@
 import { Noto_Sans_KR, Bagel_Fat_One } from 'next/font/google';
+import { CURRENT } from '@/projects';
 import './globals.css';
 
 const notoSansKR = Noto_Sans_KR({
@@ -15,24 +16,30 @@ const bagelFatOne = Bagel_Fat_One({
   variable: '--font-bagel-fat-one',
 });
 
+// 공유 미리보기(카톡 등)는 진행 중인 프로젝트 정보를 쓴다
+const OPEN = CURRENT.status === 'open';
+const TITLE = OPEN ? `${CURRENT.intro.title} 체험 예약 | 조립공간` : '조립공간 체험 예약';
+const DESC = (OPEN && CURRENT.ogDescription) || '🧩 끼우고 · 쌓고 · 만드는 모듈형 조립 체험 예약';
+const OG_IMAGE = (OPEN && CURRENT.ogImage) || '/og-image.jpg';
+
 export const metadata = {
   metadataBase: new URL('https://jolib-booking.vercel.app'),
-  title: '조립공간 체험 예약',
-  description: '끼우고 · 쌓고 · 만드는 모듈형 조립 체험 예약',
+  title: TITLE,
+  description: DESC,
   openGraph: {
     type: 'website',
-    title: '조립공간 체험 예약',
-    description: '🧩 끼우고 · 쌓고 · 만드는 모듈형 조립 체험 예약',
+    title: TITLE,
+    description: DESC,
     url: 'https://jolib-booking.vercel.app',
     siteName: '조립공간 체험 예약',
     locale: 'ko_KR',
-    images: [{ url: '/og-image.jpg' }],
+    images: [{ url: OG_IMAGE }],
   },
   twitter: {
     card: 'summary_large_image',
-    title: '조립공간 체험 예약',
-    description: '🧩 끼우고 · 쌓고 · 만드는 모듈형 조립 체험 예약',
-    images: ['/og-image.jpg'],
+    title: TITLE,
+    description: DESC,
+    images: [OG_IMAGE],
   },
 };
 

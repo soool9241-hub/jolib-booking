@@ -17,25 +17,55 @@ export const secretBase = {
   priceCard: 6000,
   bank: '카카오뱅크 3333-06-4749542 임솔',
 
+  // 소개 페이지 내용은 당근 비즈프로필 '기획자 비밀기지 만들기' 게시글 기준
+  // https://www.daangn.com/kr/local-profile/45kj9mgihaxr/
   intro: {
-    tag: '🏠 조립공간 체험',
+    tag: '📍 전주 남부시장 청년몰',
     title: '비밀기지 만들기',
-    sub: '끼우고 · 쌓고 · 만드는 모듈형 조립 체험',
+    sub: '나만의 아늑한 비밀기지 만들기 체험',
     icon: '🏠',
-    missionTitle: '미션!',
-    mission: '나만 아는 비밀 장소에\n멋진 비밀기지를 지어 주세요!',
+    image: '/projects/secret-base/poster.jpg', // 미션 카드 메인 사진
+    imageAlt: '비밀기지 만들기 체험단 모집 포스터',
+    missionTitle: '내가 직접 만드는 비밀기지!',
+    mission: '상상 속 나만의 아지트를 만들어볼까요?\n커다란 블록을 친구들과 함께 조립해\n몸이 들어갈 수 있는 공간을 만들고,\n손동작으로 블록을 만드는 디지털 체험도 해봐요!',
+    // 당근 모집 게시글 이미지 순서
+    cards: [
+      { src: '/projects/secret-base/card-1-pieces.jpg', alt: '커다란 조각으로 나만의 아지트를 만들어요' },
+      { src: '/projects/secret-base/card-2-gesture.jpg', alt: '이번엔 손짓으로 블록을 만들어볼까요?' },
+      { src: '/projects/secret-base/card-3-info.jpg', alt: '대상 초등학생 1~6학년, 장소 전주 남부시장 청년몰, 회차별 약 50분, 참가비 5,000원 간식 제공' },
+    ],
     steps: [
-      { icon: '📋', title: '체험 안내', desc: '체험 미션과 조립 방법을\n안내받아요' },
-      { icon: '🤲', title: '조립 체험', desc: '나무 조각을 끼우고 쌓아서\n나만의 비밀기지를 만들어요' },
-      { icon: '📸', title: '완성작 사진 촬영', desc: '내가 만든 비밀기지와 함께\n사진을 찍어요' },
+      { icon: '📋', title: '체험 안내', desc: '오늘의 미션과 조립 방법을\n안내받아요' },
+      { icon: '🧱', title: '커다란 조각으로 아지트 만들기', desc: '네모, 세모, 동그라미 조각을\n자유롭게 끼우고 연결해요' },
+      { icon: '✋', title: '손짓으로 블록 만들기', desc: '손을 오므렸다 쭉 펴면 가상 블록이 생겨요\n움직이고 쌓아보는 디지털 체험' },
+      { icon: '🍪', title: '간식 & 간단한 설문', desc: '간식을 먹으며\n체험 소감을 들려주세요' },
     ],
     info: [
-      { icon: '📅', label: '일정', value: '수 · 토 · 일' },
-      { icon: '⏰', label: '운영', value: '오후 3시~7시' },
-      { icon: '👧', label: '타임당', value: '최대 6명' },
+      { icon: '🧒', label: '대상', value: '초등학생 1~6학년' },
+      { icon: '📍', label: '장소', value: '전주 남부시장 청년몰' },
+      { icon: '⏱️', label: '운영', value: '회차별 약 50분' },
+      { icon: '🍪', label: '참가비', value: '5,000원 (간식 제공)' },
     ],
-    notice: '타임당 6명까지만 받아요\n미리 신청해서 예약해주세요!',
+    recommendTitle: '이런 아이에게 추천해요',
+    recommend: [
+      '옷장 속에 들어가거나 이불 동굴을 만들며 좁고 구석진 공간에서 노는 걸 좋아하는 아이',
+      '레고나 블럭으로 뭐든 뚝딱뚝딱 만들기를 좋아하는 아이',
+      '자기 몸만 한 큰 조각을 나르며 에너지 방출이 필요한 아이',
+      '아이에게 새로운 놀이 경험을 해주고 싶은 부모님',
+    ],
+    photosTitle: '지난 체험 현장',
+    photos: [
+      '/projects/secret-base/photo-1.jpg',
+      '/projects/secret-base/photo-2.jpg',
+      '/projects/secret-base/photo-3.jpg',
+      '/projects/secret-base/photo-4.jpg',
+      '/projects/secret-base/photo-5.jpg',
+      '/projects/secret-base/photo-6.jpg',
+    ],
+    notice: '정식 출시 전 진행하는 시제품 체험 테스트예요\n체험 후 간단한 설문에 함께해 주세요!',
   },
+  ogImage: '/projects/secret-base/poster.jpg',
+  ogDescription: '상상 속 나만의 아지트를 만들어볼까요? 전주 남부시장 청년몰 · 10.28(수) 31(토) 11.1(일) 오후 3시~7시',
 
   // 구글폼으로 먼저 받은 예약 8건(아이 11명)은 2026-10-28 Supabase bookings에 입금완료로 저장함
   // 시트: https://docs.google.com/spreadsheets/d/16GuApXSyHV7yw9MGYEU9x8AgpUh1-rY0ORxyHbMxEn4

@@ -1,8 +1,9 @@
+import Image from 'next/image';
 import { BOOKING_OPEN, INTRO, PT } from '@/lib/constants';
 import { fmt } from '@/utils/helpers';
 import s from '../styles/IntroStep.module.css';
 
-const BADGE_COLORS = ['#FFB347', '#FF6B35', '#4caf50'];
+const BADGE_COLORS = ['#FFB347', '#FF6B35', '#4caf50', '#9C6ADE'];
 
 export default function IntroStep({ onStart, onAdminClick }) {
   return (
@@ -20,11 +21,28 @@ export default function IntroStep({ onStart, onAdminClick }) {
 
       <div style={{ padding: '28px 20px 0' }}>
         <div className={s.aboutCard}>
-          <div style={{ fontSize: 44, marginBottom: 12, animation: 'float 3s ease-in-out infinite' }}>{INTRO.icon}</div>
+          {INTRO.image ? (
+            <Image src={INTRO.image} alt={INTRO.imageAlt || INTRO.title} width={1440} height={1440} priority
+              sizes="(max-width: 480px) 100vw, 440px" className={s.missionImg} />
+          ) : (
+            <div style={{ fontSize: 44, marginBottom: 12, animation: 'float 3s ease-in-out infinite' }}>{INTRO.icon}</div>
+          )}
           <h3 className={s.aboutH}>{INTRO.missionTitle}</h3>
           <p className={s.aboutP}>{INTRO.mission}</p>
         </div>
       </div>
+
+      {INTRO.cards?.length > 0 && (
+        <div style={{ padding: '28px 20px 0' }}>
+          <h3 className={s.secTitle}>체험 소개</h3>
+          <div className={s.cardList}>
+            {INTRO.cards.map(c => (
+              <Image key={c.src} src={c.src} alt={c.alt} width={1440} height={1440}
+                sizes="(max-width: 480px) 100vw, 440px" className={s.cardImg} />
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ padding: '28px 20px 0' }}>
         <h3 className={s.secTitle}>체험 방법 안내</h3>
@@ -40,7 +58,19 @@ export default function IntroStep({ onStart, onAdminClick }) {
         </div>
       </div>
 
-      {INTRO.info.length > 0 && (
+      {INTRO.info.length > 3 && (
+        <div className={s.infoGrid}>
+          {INTRO.info.map((it, i) => (
+            <div key={i} className={s.infoCell}>
+              <div style={{ fontSize: 24, marginBottom: 6 }}>{it.icon}</div>
+              <div className={s.infoLabel}>{it.label}</div>
+              <div className={s.infoValue}>{it.value}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {INTRO.info.length > 0 && INTRO.info.length <= 3 && (
         <div className={s.infoStrip}>
           {INTRO.info.map((it, i) => (
             <div key={i} style={{ display: 'contents' }}>
@@ -52,6 +82,28 @@ export default function IntroStep({ onStart, onAdminClick }) {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {INTRO.recommend?.length > 0 && (
+        <div style={{ padding: '28px 20px 0' }}>
+          <h3 className={s.secTitle}>{INTRO.recommendTitle}</h3>
+          <ul className={s.recList}>
+            {INTRO.recommend.map((r, i) => <li key={i} className={s.recItem}>✔️ {r}</li>)}
+          </ul>
+        </div>
+      )}
+
+      {INTRO.photos?.length > 0 && (
+        <div style={{ padding: '28px 0 0' }}>
+          <h3 className={s.secTitle}>{INTRO.photosTitle}</h3>
+          <div className={s.photoRow}>
+            {INTRO.photos.map(src => (
+              <div key={src} className={s.photoBox}>
+                <Image src={src} alt={INTRO.photosTitle} fill sizes="200px" style={{ objectFit: 'cover' }} />
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
