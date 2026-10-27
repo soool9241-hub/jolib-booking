@@ -67,6 +67,6 @@ export const secretBase = {
   ogImage: '/projects/secret-base/poster.jpg',
   ogDescription: '상상 속 나만의 아지트를 만들어볼까요? 전주 남부시장 청년몰 · 10.28(수) 31(토) 11.1(일) 오후 3시~7시',
 
-  // 구글폼으로 먼저 받은 예약 8건(아이 11명)은 2026-10-28 Supabase bookings에 입금완료로 저장함
+  // 구글시트 "시트3"(취합본) 기준 예약 14건(아이 20명)을 2026-10-28 Supabase bookings에 저장함 (입금 O → 입금완료)
   // 시트: https://docs.google.com/spreadsheets/d/16GuApXSyHV7yw9MGYEU9x8AgpUh1-rY0ORxyHbMxEn4
 };
