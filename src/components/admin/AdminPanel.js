@@ -6,6 +6,7 @@ import OverviewTab from './OverviewTab';
 import BookingsTab from './BookingsTab';
 import SlotsTab from './SlotsTab';
 import ReviewsTab from './ReviewsTab';
+import FeedbackTab from './FeedbackTab';
 import EditModal from './EditModal';
 import s from '../styles/AdminPanel.module.css';
 
@@ -40,6 +41,7 @@ export default function AdminPanel({
     { k: 'overview', l: '📊 현황' },
     { k: 'bookings', l: '📋 예약' },
     { k: 'slots', l: '🔒 시간' },
+    { k: 'feedback', l: '💬 후기' },
     { k: 'reviews', l: '📸 인증샷' },
   ];
 
@@ -118,6 +120,8 @@ export default function AdminPanel({
             toggleBlk={toggleBlk}
           />
         )}
+
+        {admTab === 'feedback' && <FeedbackTab project={project} />}
 
         {admTab === 'reviews' && <ReviewsTab project={project} />}
       </div>
