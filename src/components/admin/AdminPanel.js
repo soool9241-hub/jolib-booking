@@ -113,6 +113,7 @@ export default function AdminPanel({
         {admTab === 'slots' && (
           <SlotsTab
             project={project}
+            bookings={bookings}
             admDate={admDate}
             setAdmDate={setAdmDate}
             isBlk={isBlk}

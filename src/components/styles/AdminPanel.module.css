@@ -490,8 +490,12 @@
   gap: 8px;
 }
 
-.slotRow {
+.slotWrap {
   border-radius: 12px;
+  overflow: hidden;
+}
+
+.slotRow {
   padding: 14px 16px;
   display: flex;
   justify-content: space-between;
@@ -617,4 +621,70 @@
   color: #fff;
   font-size: 18px;
   background: rgba(0, 0, 0, 0.25);
+}
+
+/* Slot detail (시간 탭 예약자 명단) */
+.slotHint {
+  text-align: center;
+  font-size: 12px;
+  color: #aaa;
+  margin: -8px 0 12px;
+}
+
+.slotArrow {
+  font-size: 10px;
+  color: #aaa;
+  margin-left: 4px;
+}
+
+.slotDetail {
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 8px 12px 12px;
+}
+
+.slotEmpty {
+  text-align: center;
+  color: #bbb;
+  font-size: 13px;
+  padding: 10px 0 4px;
+}
+
+.slotPerson {
+  padding: 10px 4px;
+  border-bottom: 1px dashed #eee;
+}
+
+.slotPerson:last-child {
+  border-bottom: none;
+}
+
+.slotPersonTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+}
+
+.slotPay {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.slotPhone {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: #555;
+  text-decoration: none;
+}
+
+.slotKids {
+  margin-top: 6px;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
