@@ -49,6 +49,21 @@ export default function BookingApp() {
   // 마감된 프로젝트는 snapshot으로 보여주므로 첫 화면에서 DB를 읽지 않는다 (관리자 로그인 시에는 읽음)
   useEffect(() => { if (BOOKING_OPEN) loadData(); else setLoading(false); }, [loadData]);
 
+  // 폰에서 링크를 다시 열거나 앱으로 돌아오면 예전 화면이 그대로 복원되므로, 그때마다 최신 예약을 다시 읽는다
+  useEffect(() => {
+    if (!BOOKING_OPEN && !isAdmin) return;
+    const refresh = () => { if (document.visibilityState === 'visible') loadData(); };
+    const onShow = (e) => { if (e.persisted) loadData(); };
+    document.addEventListener('visibilitychange', refresh);
+    window.addEventListener('focus', refresh);
+    window.addEventListener('pageshow', onShow);
+    return () => {
+      document.removeEventListener('visibilitychange', refresh);
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('pageshow', onShow);
+    };
+  }, [loadData, isAdmin]);
+
   // Provide exit callback for AdminPanel
   useEffect(() => {
     window.__exitAdmin = () => setIsAdmin(false);
@@ -101,22 +116,28 @@ export default function BookingApp() {
   };
   const admCancel = async (b) => {
     if (!confirm(b.name + '님 예약 취소?')) return;
-    await supabase.from('bookings').delete().eq('id', b.id);
+    // 지워진 행을 돌려받아서 실제로 취소됐는지 확인한다 (실패해도 조용히 넘어가지 않게)
+    const { data, error } = await supabase.from('bookings').delete().eq('id', b.id).select('id');
     await loadData();
+    if (error) alert('취소 실패: ' + error.message + '\n인터넷 연결을 확인하고 다시 시도해주세요.');
+    else if (!data?.length) alert('이미 취소된 예약이에요. 화면을 새로 불러왔어요.');
+    else alert(b.name + '님 예약을 취소했어요.');
   };
   const toggleStatus = async (b) => {
     const next = b.status === '입금대기' ? '입금완료' : '입금대기';
-    await supabase.from('bookings').update({ status: next }).eq('id', b.id);
+    const { error } = await supabase.from('bookings').update({ status: next }).eq('id', b.id);
+    if (error) alert('변경 실패: ' + error.message);
     await loadData();
   };
   const startEdit = (b) => { setEditing(b); setEditF({ name: b.name, phone: b.phone, count: b.count, payment: b.payment }); };
   const saveEdit = async () => {
     if (!editing) return;
     const up = editF.payment === 'transfer' ? PT : PC;
-    await supabase.from('bookings').update({
+    const { error } = await supabase.from('bookings').update({
       name: editF.name, phone: editF.phone, count: editF.count,
       payment: editF.payment, total_price: up * editF.count,
     }).eq('id', editing.id);
+    if (error) { alert('수정 실패: ' + error.message); return; }
     await loadData(); setEditing(null);
   };
   const toggleBlk = async (d, t) => {
