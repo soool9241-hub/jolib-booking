@@ -597,6 +597,9 @@
 
 .fbThumb {
   position: relative;
+  padding: 0;
+  border: none;
+  cursor: pointer;
   flex: 0 0 56px;
   height: 56px;
   border-radius: 8px;
