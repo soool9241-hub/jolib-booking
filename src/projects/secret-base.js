@@ -7,7 +7,7 @@ export const secretBase = {
 
   dates: [
     { key: '10/28 (수)', label: '10/28 (수)', day: 1, startHour: 15, endHour: 20 },
-    { key: '10/31 (토)', label: '10/31 (토)', day: 2, startHour: 15, endHour: 20 },
+    { key: '10/31 (토)', label: '10/31 (토)', day: 2, startHour: 14, endHour: 20 }, // 10/31 당일 14:00 타임 추가
     { key: '11/1 (일)', label: '11/1 (일)', day: 3, startHour: 15, endHour: 20 },
   ],
   slotMinutes: 60, // 15:00, 16:00, 17:00, 18:00, 19:00
