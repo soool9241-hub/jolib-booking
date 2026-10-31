@@ -1,6 +1,12 @@
+import { SOURCE_CHOICES, splitSources } from '@/utils/helpers';
 import styles from '../styles/Modal.module.css';
 
 export default function EditModal({ editing, editF, setEditF, onSave, onClose }) {
+  const tags = splitSources(editF.source);
+  const toggleTag = (t) => {
+    const next = tags.includes(t) ? tags.filter(x => x !== t) : [...tags, t];
+    setEditF({ ...editF, source: next.join(', ') });
+  };
   return (
     <div className={styles.overlay}>
       <div className={styles.editBox}>
@@ -24,6 +30,16 @@ export default function EditModal({ editing, editF, setEditF, onSave, onClose })
           <div className={styles.payBtnRow}>
             <button className={`${styles.payBtn} ${editF.payment === 'transfer' ? styles.payBtnActive : ''}`} onClick={() => setEditF({ ...editF, payment: 'transfer' })}>사전예약</button>
             <button className={`${styles.payBtn} ${editF.payment === 'card' ? styles.payBtnActive : ''}`} onClick={() => setEditF({ ...editF, payment: 'card' })}>카드</button>
+          </div>
+        </div>
+
+        <div className={styles.editGroup}>
+          <label className={styles.editLabel}>유입경로 (여러 개 선택 가능)</label>
+          <div className={styles.payBtnRow} style={{ flexWrap: 'wrap' }}>
+            {SOURCE_CHOICES.map(t => (
+              <button key={t} type="button" style={{ flex: '0 0 auto', padding: '8px 12px' }}
+                className={`${styles.payBtn} ${tags.includes(t) ? styles.payBtnActive : ''}`} onClick={() => toggleTag(t)}>{t}</button>
+            ))}
           </div>
         </div>
 

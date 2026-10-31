@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { genSlots, columnsToChildren } from '@/utils/helpers';
+import SourceTags from './SourceTags';
 import s from '../styles/AdminPanel.module.css';
 
 export default function SlotsTab({ project, bookings, admDate, setAdmDate, isBlk, getBooked, toggleBlk }) {
@@ -66,7 +67,10 @@ export default function SlotsTab({ project, bookings, admDate, setAdmDate, isBlk
                             {paid ? '입금완료' : '입금대기'}
                           </span>
                         </div>
-                        {b.phone && <a href={`tel:${b.phone}`} className={s.slotPhone}>📞 {b.phone}</a>}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          {b.phone && <a href={`tel:${b.phone}`} className={s.slotPhone}>📞 {b.phone}</a>}
+                          <SourceTags source={b.source} />
+                        </div>
                         {ch.length > 0 && (
                           <div className={s.slotKids}>
                             {ch.map((c, j) => (

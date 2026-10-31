@@ -43,3 +43,10 @@ export function columnsToChildren(booking) {
   }
   return arr;
 }
+
+// 예약 유입경로: "포스터, 팔복광고"처럼 여러 개면 쉼표로 나눈다
+export const SOURCE_CHOICES = ['당근', '메타', '포스터', '팔복광고', '현장접수', '지인소개'];
+export const SOURCE_COLORS = { '당근': '#FF6F0F', '메타': '#1877F2', '포스터': '#8E44AD', '팔복광고': '#16A085', '현장접수': '#555' };
+export function splitSources(source) {
+  return (source || '').split(',').map(t => t.trim()).filter(Boolean);
+}

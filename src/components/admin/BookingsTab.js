@@ -1,5 +1,6 @@
 import * as XLSX from 'xlsx';
 import { fmt, columnsToChildren } from '@/utils/helpers';
+import SourceTags from './SourceTags';
 import s from '../styles/AdminPanel.module.css';
 
 function downloadExcel(bookings, project) {
@@ -17,12 +18,13 @@ function downloadExcel(bookings, project) {
       '금액': b.total_price,
       '상태': b.status,
       '아이정보': childrenStr,
+      '유입경로': b.source || '',
     };
   });
   const ws = XLSX.utils.json_to_sheet(rows);
   ws['!cols'] = [
     { wch: 5 }, { wch: 10 }, { wch: 8 }, { wch: 10 }, { wch: 15 },
-    { wch: 5 }, { wch: 14 }, { wch: 10 }, { wch: 10 }, { wch: 30 },
+    { wch: 5 }, { wch: 14 }, { wch: 10 }, { wch: 10 }, { wch: 30 }, { wch: 16 },
   ];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, '예약목록');
@@ -48,7 +50,7 @@ export default function BookingsTab({ project, bookings, bkTab, setBkTab, toggle
         </div>
       </div>
       <div className={s.bBody}>
-        <div style={{ fontWeight: 700 }}>{b.name} <span style={{ fontWeight: 400, color: '#888' }}>({b.count}명)</span></div>
+        <div style={{ fontWeight: 700 }}>{b.name} <span style={{ fontWeight: 400, color: '#888' }}>({b.count}명)</span> <SourceTags source={b.source} /></div>
         <div style={{ fontSize: 13, color: '#666', marginTop: 2 }}>{b.phone}</div>
         <div style={{ fontSize: 12, color: '#888', marginTop: 4 }}>
           결제: <span style={{ fontWeight: 600, color: b.payment === 'transfer' ? '#2e7d32' : '#e65100' }}>

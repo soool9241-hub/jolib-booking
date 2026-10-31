@@ -129,13 +129,13 @@ export default function BookingApp() {
     if (error) alert('변경 실패: ' + error.message);
     await loadData();
   };
-  const startEdit = (b) => { setEditing(b); setEditF({ name: b.name, phone: b.phone, count: b.count, payment: b.payment }); };
+  const startEdit = (b) => { setEditing(b); setEditF({ name: b.name, phone: b.phone, count: b.count, payment: b.payment, source: b.source || '' }); };
   const saveEdit = async () => {
     if (!editing) return;
     const up = editF.payment === 'transfer' ? PT : PC;
     const { error } = await supabase.from('bookings').update({
       name: editF.name, phone: editF.phone, count: editF.count,
-      payment: editF.payment, total_price: up * editF.count,
+      payment: editF.payment, total_price: up * editF.count, source: editF.source || null,
     }).eq('id', editing.id);
     if (error) { alert('수정 실패: ' + error.message); return; }
     await loadData(); setEditing(null);

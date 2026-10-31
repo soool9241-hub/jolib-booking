@@ -1,4 +1,4 @@
-import { genSlots, fmt } from '@/utils/helpers';
+import { genSlots, fmt, splitSources, SOURCE_COLORS } from '@/utils/helpers';
 import s from '../styles/AdminPanel.module.css';
 
 export default function OverviewTab({ project, bookings, blocked, totBooked, totRev, isBlk, loadData, admReset }) {
@@ -31,6 +31,19 @@ export default function OverviewTab({ project, bookings, blocked, totBooked, tot
   bookings.forEach(b => { timeMap[b.time] = (timeMap[b.time] || 0) + (b.count || 1); });
   const top3 = Object.entries(timeMap).sort((a, b) => b[1] - a[1]).slice(0, 3);
   const medals = ['🥇', '🥈', '🥉'];
+
+  // 유입경로 (한 가족이 여러 경로면 각각 센다, 비어 있으면 '앱 예약')
+  const srcMap = {};
+  bookings.forEach(b => {
+    const tags = splitSources(b.source);
+    (tags.length ? tags : ['앱 예약']).forEach(t => {
+      srcMap[t] = srcMap[t] || { fam: 0, kids: 0 };
+      srcMap[t].fam += 1;
+      srcMap[t].kids += b.count || 1;
+    });
+  });
+  const srcList = Object.entries(srcMap).sort((a, b) => b[1].kids - a[1].kids);
+  const srcMax = Math.max(1, ...srcList.map(([, v]) => v.kids));
 
   return (
     <>
@@ -138,6 +151,20 @@ export default function OverviewTab({ project, bookings, blocked, totBooked, tot
         ) : (
           <div className={s.topSlotEmpty}>예약 데이터 없음</div>
         )}
+      </div>
+
+      {/* 5. 유입경로 */}
+      <div className={s.topSlotCard}>
+        <div className={s.sectionTitle}>어디서 보고 오셨나요? (유입경로)</div>
+        {srcList.length > 0 ? srcList.map(([name, v]) => (
+          <div key={name} className={s.srcRow}>
+            <span className={s.srcRowName}>{name}</span>
+            <div className={s.srcBarBg}>
+              <div className={s.srcBarFill} style={{ width: (v.kids / srcMax * 100) + '%', background: SOURCE_COLORS[name] || '#bbb' }} />
+            </div>
+            <span className={s.srcRowNum}>{v.fam}가족 · {v.kids}명</span>
+          </div>
+        )) : <div className={s.topSlotEmpty}>예약 데이터 없음</div>}
       </div>
 
       {/* 기존 날짜별 카드 */}
